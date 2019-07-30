@@ -10,6 +10,7 @@ body {
     font-family: "Sawarabi Gothic";
     overflow: hidden;
     height: 100%;
+    background-color: #000;
 }
 
 #top {
