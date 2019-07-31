@@ -41,28 +41,10 @@ function main() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     const prog = createProgram(gl, vert, frag, ["tex"]);
-    const vao = gl.createVertexArray();
-
-    const vbo = createBuffer(gl, new Float32Array([
-        -1.0, -1.0,
-        1.0, 0.0,
-        -0.5, 1.0
-    ]))
-
-    attachBuffer(gl, vao, vbo, 0, 2);
 
     const tex = createTexture(gl, 'img/rabbit.png', gl.RGBA, gl.UNSIGNED_BYTE);
 
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", "data/asdf.bin", true);
-    xhr.responseType = "arraybuffer";
-    xhr.onload = function() {
-        const abuf = xhr.response;
-        const fbuf = new Float32Array(abuf);
-        console.log(fbuf[0]);
-    }
-    xhr.send();
-    
+    const model = loadObj(gl, "data/aaa.obj");
     
     var then = 0;
 
@@ -70,23 +52,12 @@ function main() {
         now *= 0.001;  // convert to seconds
         const deltaTime = now - then;
         then = now;
-
-        const tt = now * Math.PI;
-        const tt2 = tt + Math.PI * 2.0 / 3.0;
-        const tt3 = tt + Math.PI * 4.0 / 3.0;
-
-        setBufferData(gl, vbo, new Float32Array([
-            Math.sin(tt), Math.cos(tt),
-            Math.sin(tt2), Math.cos(tt2),
-            Math.sin(tt3), Math.cos(tt3)
-        ]), 0);
     
         gl.useProgram(prog.pointer);
         gl.uniform1i(prog.uniforms[0], 0);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.bindVertexArray(vao);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        model.bindAndDrawGL();
     
         requestAnimationFrame(render);
     }
