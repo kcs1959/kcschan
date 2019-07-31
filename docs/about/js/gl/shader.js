@@ -4,7 +4,7 @@ function createShader(gl, type, src) {
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+        console.log('Error compiling shader: ' + gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
     }
@@ -12,7 +12,7 @@ function createShader(gl, type, src) {
     return shader;
 }
 
-function createProgram(gl, vs, fs) {
+function createProgram(gl, vs, fs, vrs) {
     const vsh = createShader(gl, gl.VERTEX_SHADER, vs);
     const fsh = createShader(gl, gl.FRAGMENT_SHADER, fs);
     
@@ -26,9 +26,17 @@ function createProgram(gl, vs, fs) {
     gl.deleteShader(fsh);
 
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-        alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(prog));
+        console.log('Error linking program: ' + gl.getProgramInfoLog(prog));
         return null;
     }
 
-    return prog;
+    uniforms = [];
+    vrs.forEach(function (v) {
+        uniforms.push(gl.getUniformLocation(prog, v));
+    });
+
+    return {
+        pointer : prog,
+        uniforms : uniforms
+    };
 }

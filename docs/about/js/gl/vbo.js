@@ -12,3 +12,8 @@ function attachBuffer(gl, vao, buf, id, dim) {
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.vertexAttribPointer(id, dim, gl.FLOAT, false, 0, 0);
 }
+
+function setBufferData(gl, buf, data, off) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, off, data);
+}
