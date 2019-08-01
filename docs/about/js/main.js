@@ -4,13 +4,14 @@ function main() {
     const vert = `#version 300 es
         precision mediump float;
 
-        layout (location=0) in vec2 ipos;
+        layout (location=0) in vec3 in_pos;
+        layout (location=1) in vec3 in_nrm;
+        layout (location=2) in vec2 in_uv;
 
         out vec2 v2f_uv;
         void main() {
-            v2f_uv = ipos * 0.5 + 0.5;
-            v2f_uv.y = 1.0 - v2f_uv.y;
-            gl_Position = vec4(ipos, 0, 1);
+            v2f_uv = in_uv;
+            gl_Position = vec4(in_pos, 1);
         }
     `;
     
@@ -44,7 +45,7 @@ function main() {
 
     const tex = createTexture(gl, 'img/rabbit.png', gl.RGBA, gl.UNSIGNED_BYTE);
 
-    const model = loadObj(gl, "data/aaa.obj");
+    const model = loadObj(gl, "data/monkey.obj");
     
     var then = 0;
 
@@ -53,6 +54,10 @@ function main() {
         const deltaTime = now - then;
         then = now;
     
+        gl.disable(gl.BLEND);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
+
         gl.useProgram(prog.pointer);
         gl.uniform1i(prog.uniforms[0], 0);
         gl.activeTexture(gl.TEXTURE0);
