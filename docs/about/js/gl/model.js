@@ -1,9 +1,32 @@
-function createModel() {
+function createModelSt() {
     return {
         verts : [],
         norms : [],
         tris : [],
-        uvs : []
+        uvs : [],
+        skinned : false,
+        grpIds : [],
+        grpWts : []
+    };
+}
+
+function createModelBuffersSt(gl) {
+    return {
+        vao : null, vao_tf : null,
+        vbos : [], vbos_tf : [],
+        elo : null,
+        grpId : null,
+        grpWt : null,
+        vcnt : 0,
+        tcnt : 0,
+        bindGL : function() {
+            gl.bindVertexArray(this.vao);
+            this.elo.bindGL();
+        },
+        bindAndDrawGL : function() {
+            this.bindGL();
+            gl.drawElements(gl.TRIANGLES, this.tcnt * 3, gl.UNSIGNED_SHORT, 0);
+        }
     };
 }
 
@@ -19,21 +42,32 @@ function genModelBuffers(gl, model) {
     attachBuffer(gl, vao, nb, 1, 3);
     attachBuffer(gl, vao, ub, 2, 2);
 
-    return {
-        vao : vao,
-        vbos : [ vb, nb, ub ],
-        elo : tb,
-        vcnt : model.verts.length / 3,
-        tcnt : model.tris.length / 3,
-        bindGL : function() {
-            gl.bindVertexArray(this.vao);
-            this.elo.bindGL();
-        },
-        bindAndDrawGL : function() {
-            this.bindGL();
-            gl.drawElements(gl.TRIANGLES, this.tcnt * 3, gl.UNSIGNED_SHORT, 0);
-        }
-    };
+    bufs = createModelBuffersSt(gl);
+    bufs.vao = vao;
+    bufs.vbos = [ vb, nb, ub ];
+    bufs.elo = tb;
+    
+    if (model.skinned) {
+        
+        const vao2 = gl.createVertexArray();
+        const vb2 = createBuffer(gl, new Float32Array(model.verts));
+        const nb2 = createBuffer(gl, new Float32Array(model.norms));
+        const ub2 = createBuffer(gl, new Float32Array(model.uvs));
+        
+        attachBuffer(gl, vao2, vb2, 0, 3);
+        attachBuffer(gl, vao2, nb2, 1, 3);
+        attachBuffer(gl, vao2, ub2, 2, 2);
+        
+        const gid = createBuffer(gl, new Int32Array(model.grpIds));
+        const gwt = createBuffer(gl, new Float32Array(model.grpWts));
+
+        bufs.vao_tf = vao2;
+        bufs.vbos_tf = [ vb2, nb2, ub2 ];
+        bufs.grpId = gid;
+        bufs.grpWt = gwt;
+    }
+    
+    return bufs;
 }
 
 function updateModelBuffers(gl, modelGL, model) {

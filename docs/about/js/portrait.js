@@ -75,6 +75,13 @@ function portrait_main() {
     const prog = createProgram(gl, vert, frag, ["MVP", "tex"]);
     const prog2 = createProgram(gl, vert, frag, ["MVP", "tex"]);
     const prog3 = createProgram(gl, vert, frag, ["MVP", "tex"]);
+    
+    const skinProg = null;
+    loadString('glsl/skin_tf.vs', function(vs) {
+        loadString('glsl/skin_tf.fs', function(fs) {
+            createTFProgram(gl, vs, fs, ["outPos", "outNrm", "outUv"], ["vertCount", "dats", "mats", "shps", "shpWs"]);
+        });
+    });
 
     const model = loadObj(gl, "data/kcschan.obj");
     const model2 = loadObj(gl, "data/hair.obj");
@@ -113,23 +120,17 @@ function portrait_main() {
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
-        gl.useProgram(prog.pointer);
+        prog.bind();
         gl.uniformMatrix4fv(prog.uniforms[0], false, MVP);
-        gl.uniform1i(prog.uniforms[1], 0);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, tex);
+        tex.bind(prog.uniforms[1], 0);
         model.bindAndDrawGL();
-        gl.useProgram(prog2.pointer);
+        prog2.bind();
         gl.uniformMatrix4fv(prog2.uniforms[0], false, MVP);
-        gl.uniform1i(prog2.uniforms[1], 0);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, tex2);
+        tex2.bind(prog2.uniforms[1], 0);
         model2.bindAndDrawGL();
-        gl.useProgram(prog3.pointer);
+        prog3.bind();
         gl.uniformMatrix4fv(prog3.uniforms[0], false, MVP);
-        gl.uniform1i(prog3.uniforms[1], 0);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, tex3);
+        tex3.bind(prog3.uniforms[1], 0);
         model3.bindAndDrawGL();
     
         requestAnimationFrame(render);
