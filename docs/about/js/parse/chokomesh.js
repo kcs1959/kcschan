@@ -1,14 +1,13 @@
-function loadCMesh(gl, path) {
+function loadCMesh(gl, path, onload = null) {
     var model = createModelSt();
     var modelGL = genModelBuffers(gl, model);
     
-    const signature = "KTO123";
     loadBinary(path, function(bstrm) {
         var off = 0;
         
         var decoder = new TextDecoder();
         const sig = decoder.decode(new DataView(bstrm, 0, 6));
-        if (sig != signature) {
+        if (sig != "KTO123") {
             console.log('unexpected mesh signature:"' + sig + '"');
             return;
         }
@@ -91,6 +90,9 @@ function loadCMesh(gl, path) {
             }
             if (off == dv.byteLength) break;
             dtype = dv.getInt8(off, true); off += 1;
+        }
+        if (onload) {
+            onload(modelGL);
         }
     });
     

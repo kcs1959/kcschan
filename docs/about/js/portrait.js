@@ -1,5 +1,7 @@
 var mat4 = glMatrix.mat4;
 var vec3 = glMatrix.vec3;
+var vec4 = glMatrix.vec4;
+var quat = glMatrix.quat;
 
 var portrait_turn_left = false;
 var portrait_turn_right = false;
@@ -40,6 +42,8 @@ function portrait_main() {
     const tex = createTexture(gl, 'img/body.png', gl.RGBA, gl.UNSIGNED_BYTE);
     const tex2 = createTexture(gl, 'img/hair.jpg', gl.RGBA, gl.UNSIGNED_BYTE);
     const tex3 = createTexture(gl, 'img/uniform.png', gl.RGBA, gl.UNSIGNED_BYTE);
+
+    loadBlend(gl,  'data/kcschan');
 
     const prog = createProgram(gl, 'glsl/unlit.vs', 'glsl/unlit.fs', ["MVP", "tex"]);
     
