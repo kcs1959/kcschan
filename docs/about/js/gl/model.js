@@ -1,3 +1,10 @@
+function createModelGroupWeightSt() {
+    return {
+        id : 0,
+        val : 0.0
+    };
+}
+
 function createModelSt() {
     return {
         verts : [],
@@ -6,7 +13,9 @@ function createModelSt() {
         uvs : [],
         skinned : false,
         grpIds : [],
-        grpWts : []
+        grpWts : [],
+        allGrpNms : [],
+        allGrpWts: []
     };
 }
 
