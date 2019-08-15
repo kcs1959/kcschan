@@ -1,5 +1,9 @@
-function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd) {
-    if (i == strs.length) return;
+function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
+    if (i == strs.length) {
+        if (callback)
+            callback();
+        return;
+    }
     const s = strs[i];
     
     var wd = "";
@@ -68,12 +72,12 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd) {
     allObjs.push(obj);
     if (isarm) {
         loadArmature(gl, fd + obj.name + ".arma.meta", obj, () =>
-            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd)
+            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
         );
     }
     else {
         //loadMeshMeta(fd + obj.name + ".mesh.meta", obj, () =>
-            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd)
+            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback);
         //);
     }
 }
@@ -91,8 +95,9 @@ function loadBlend(gl, name) {
         var baseObj = createSceneObject(name);
         var allObjs = [];
         
-        _loadBlendEntry(gl, baseObj, allObjs, strs, 1, fd);
-
-        activeScene.objects.push(baseObj);
+        _loadBlendEntry(gl, baseObj, allObjs, strs, 1, fd, function() {
+            activeScene.objects.push(baseObj);
+            document.querySelector("#debug_scenetree").innerHTML = activeScene.tree();
+        });
     });
 }
