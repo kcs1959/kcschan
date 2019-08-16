@@ -14,13 +14,15 @@ function quat_vec(q, v) {
         var a = vec3_mulf(u, vec3.dot(u, v))
         var b = vec3_mulf(v, (s * s - vec3.dot(u, u)))
         var c = vec3_mulf(vec3_mulf(vec3_cross(u, v), s), 2);
-        return vec3_add(vec3_add(a, b), c);
+		var res = vec3_add(vec3_add(a, b), c);
+		vec3.normalize(res, res);
+		return res;
 }
 
 function quat_lookAt(tarr, up) {
     var tar = vec3_normalized(tarr);
     var fw = vec3.fromValues(0, 0, 1);
-	var q1 = quat.create;
+	var q1 = quat.create();
 	if (tar[2] > 0.999) { //no rotation required
 		;
 	}
@@ -29,6 +31,7 @@ function quat_lookAt(tarr, up) {
 	}
 	else {
 		var axis = vec3_cross(tar, fw);
+		vec3.normalize(axis, axis);
 		var angle = Math.acos(clamp(vec3.dot(tar, fw), -1.0, 1.0));
 		var tr = vec3_cross(axis, fw);
 		if (vec3.dot(tr, tar) < 0) angle *= -1;
@@ -37,7 +40,8 @@ function quat_lookAt(tarr, up) {
 
 	var mup = quat_vec(q1, vec3.fromValues(0, 1, 0));
 	var mrt = quat_vec(q1, vec3.fromValues(1, 0, 0));
-	var rt = vec3_normalized(vec3_cross(up, tar));
+	var rt = vec3_cross(up, tar);
+	vec3.normalize(rt, rt);
 	var angle2 = rad2deg*Math.acos(clamp(vec3.dot(mrt, rt), -1.0, 1.0));
 	if (vec3.dot(mup, rt) < 0) angle2 *= -1;
 	var q2 = quat_fromAxisAngle(tar, angle2);

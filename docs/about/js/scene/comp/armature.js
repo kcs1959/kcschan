@@ -2,6 +2,7 @@ function createArmatureBone(nm) {
     return {
         name : nm,
         fullName : nm,
+        length : 0,
         restMat : mat4.create(),
         animMat : mat4.create(),
         parentBn : null,

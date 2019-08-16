@@ -13,32 +13,40 @@ function loadArmatureBone(gl, bstrm, dv, off, arm, po) {
         });
         bn.fullName = bn.parentBn.fullName + "/" + bn.name;
     }
-    var pos = vec3.fromValues(
+    const pos = vec3.fromValues(
         dv.getFloat32(off, true),
         dv.getFloat32(off + 4, true),
         dv.getFloat32(off + 8, true)
     ); off += 12;
-    var tal = vec3.fromValues(
+    const tal = vec3.fromValues(
         dv.getFloat32(off, true),
         dv.getFloat32(off + 4, true),
         dv.getFloat32(off + 8, true)
     ); off += 12;
-    var fwd = vec3.fromValues(
+    const fwd = vec3.fromValues(
         dv.getFloat32(off, true),
         dv.getFloat32(off + 4, true),
         dv.getFloat32(off + 8, true)
     ); off += 12;
-    var rot = quat_lookAt(vec3_minus(tal, pos), fwd);
+    const dir = vec3_minus(tal, pos);
+    const rot = quat_lookAt(dir, fwd);
     off += 1; //mask
 
+    console.log("!>>" + bn.name + ": " + vec3_tostring(dir) + vec3_tostring(fwd));
+
     arm.bones.push(bn);
+    bn.length = vec3.length(dir);
     bn.object = createSceneObject(bn.name);
+    bn.object.position = pos;
+    bn.object.rotation = rot;
     if (bn.parentBn) {
         bn.parentBn.object.addChild(bn.object);
+        vec3.add(bn.object.position, bn.object.position, vec3.fromValues(0, 0, bn.parentBn.length));
     }
     else {
         po.addChild(bn.object);
     }
+    bn.object.updateMatrices();
 
     dtype = dv.getInt8(off, true);
     cdtype = String.fromCharCode(dtype);

@@ -84,11 +84,13 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
         else {
             baseObj.findByNm(ss[0]).findByNm(ss[1]).addChild(obj);
         }
+        obj.setWorldPos(obj.position);
     }
     else {
         baseObj.addChild(obj);
     }
     allObjs.push(obj);
+    obj.updateMatrices();
     if (isarm) {
         loadArmature(gl, fd + obj.name + ".arma.meta", obj, () =>
             _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)

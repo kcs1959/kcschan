@@ -6,6 +6,8 @@ var quat = glMatrix.quat;
 var portrait_turn_left = false;
 var portrait_turn_right = false;
 
+var portrait_clothes_id = 0;
+
 portrait_main();
 
 function portrait_main() {
@@ -56,12 +58,12 @@ function portrait_main() {
     const model2c = loadCMesh(gl, "data/hair.cmesh");
     const model3c = loadCMesh(gl, "data/summer.cmesh");
     
-    var P = mat4.create();
-    mat4.fromScaling(P, vec3.fromValues(canvas.clientHeight * 1.0 / canvas.clientWidth, 1, 1));
-
+   
     var then = 0;
     var rot = 0;
     const rotSp = 2;
+
+    var _portrait_clothes_id = portrait_clothes_id;
     
     function render(now) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -69,20 +71,28 @@ function portrait_main() {
         const deltaTime = now - then;
         then = now;
 
-        const scl = 1/3.0;
+        const scl = 0.15;
 
         if (portrait_turn_left)
             rot -= rotSp * deltaTime;
         if (portrait_turn_right)
             rot += rotSp * deltaTime;
 
+        var P = mat4.create();
+        var P2 = mat4.create();
+        mat4.fromScaling(P, vec3.fromValues(canvas.clientHeight * 1.0 / canvas.clientWidth, 1, 1));
+        mat4.fromYRotation(P2, rot);
+        mat4.mul(P, P2, P);
+        mat4.fromScaling(P2, vec3.fromValues(scl, scl, scl));
+        mat4.mul(P, P2, P);
+
+        prog.bind();
+        tex.bind(prog.uniforms[1], 0);
+        renderScene(gl, P, prog);
+        
+        /*
         var MV = mat4.create();
-        var MV2 = mat4.create();
-        mat4.fromYRotation(MV, rot);
-        mat4.fromScaling(MV2, vec3.fromValues(scl, scl, scl));
-        mat4.mul(MV, MV2, MV);
-        mat4.fromTranslation(MV2, vec3.fromValues(0, -5.0, 0));
-        mat4.mul(MV, MV2, MV);
+        mat4.fromTranslation(MV, vec3.fromValues(0, -11.0, 0));
         var MVP = mat4.create();
         mat4.mul(MVP, P, MV);
 
@@ -94,7 +104,7 @@ function portrait_main() {
         model2c.bindAndDrawGL();
         tex3.bind(prog.uniforms[1], 0);
         model3c.bindAndDrawGL();
-    
+        */
         requestAnimationFrame(render);
     }
 

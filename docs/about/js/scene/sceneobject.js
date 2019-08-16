@@ -11,18 +11,26 @@ function createSceneObject(name = "unnamed object") {
         parentObj : null,
         childObjs : [],
         
+        setWorldPos : function(v) {
+            if (!this.parentObj) this.position = v;
+            else {
+                var im = mat4.create();
+                mat4.invert(im, this.parentObj.worldMatrix);
+                position = mat_vec3_w(im, v, 1);
+            }
+        },
         updateMatrices : function() {
-            mat4.fromRotationTranslationScale(this.localMatrix, this.position, this.rotation, this.scale);
+            mat4.fromRotationTranslationScale(this.localMatrix, this.rotation, this.position, this.scale);
             this.updateWorldMatrix();
         },
         updateWorldMatrix : function() {
-            if (parentObj === null) {
+            if (!this.parentObj) {
                 this.worldMatrix = mat4.create(this.localMatrix);
             }
             else {
-                mat4.mul(this.worldMatrix, activeScene.objects[parentObj].localMatrix, this.localMatrix);
+                mat4.mul(this.worldMatrix, this.parentObj.worldMatrix, this.localMatrix);
             }
-            childObjs.forEach(function(o) {
+            this.childObjs.forEach(function(o) {
                 o.updateWorldMatrix();
             });
         },
