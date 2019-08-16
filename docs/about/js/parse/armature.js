@@ -66,7 +66,7 @@ function loadArmature(gl, path, obj, onload = null) {
         off += 1;
 
         var arm = createArmature();
-        obj.components.push(arm);
+        obj.addComponent(arm);
 
         const mxlen = dv.byteLength;
 

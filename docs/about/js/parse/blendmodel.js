@@ -1,3 +1,22 @@
+function loadMeshMeta(gl, path, obj, callback) {
+    loadCMesh(gl, path, function(mesh) {
+        const mr = createMeshRenderer();
+        obj.addComponent(mr);
+        mr.mesh = mesh;
+        callback();
+    });
+}
+
+function loadSkinnedMeshMeta(gl, path, obj, arm, callback) {
+    loadCMesh(gl, path, function(mesh) {
+        const mr = createSkinnedMeshRenderer();
+        obj.addComponent(mr);
+        mr.mesh = mesh;
+        mr.arma = obj.parentObj.findByNm(arm).components[0];
+        callback();
+    });
+}
+
 function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
     if (i == strs.length) {
         if (callback)
@@ -30,29 +49,29 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
         }
         else if (wd == "pos") {
             [wd, off] = nextWord(s, off);
-            obj.position.x = +(wd);
+            obj.position[0] = +(wd);
             [wd, off] = nextWord(s, off);
-            obj.position.y = +(wd);
+            obj.position[1] = +(wd);
             [wd, off] = nextWord(s, off);
-            obj.position.z = +(wd);
+            obj.position[2] = +(wd);
         }
         else if (wd == "rot") {
             [wd, off] = nextWord(s, off);
-            obj.rotation.w = +(wd);
+            obj.rotation[3] = +(wd);
             [wd, off] = nextWord(s, off);
-            obj.rotation.x = +(wd);
+            obj.rotation[0] = +(wd);
             [wd, off] = nextWord(s, off);
-            obj.rotation.y = +(wd);
+            obj.rotation[1] = +(wd);
             [wd, off] = nextWord(s, off);
-            obj.rotation.z = +(wd);
+            obj.rotation[2] = +(wd);
         }
         else if (wd == "scl") {
             [wd, off] = nextWord(s, off);
-            obj.scale.x = +(wd);
+            obj.scale[0] = +(wd);
             [wd, off] = nextWord(s, off);
-            obj.scale.y = +(wd);
+            obj.scale[1] = +(wd);
             [wd, off] = nextWord(s, off);
-            obj.scale.z = +(wd);
+            obj.scale[2] = +(wd);
             break;
         }
         else break;
@@ -75,10 +94,15 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
             _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
         );
     }
+    else if (partp == 1) {
+        loadMeshMeta(gl, fd + obj.name + ".mesh.meta", obj, () =>
+            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
+        );
+    }
     else {
-        //loadMeshMeta(fd + obj.name + ".mesh.meta", obj, () =>
-            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback);
-        //);
+        loadSkinnedMeshMeta(gl, fd + obj.name + ".mesh.meta", obj, pnm, () =>
+            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
+        );
     }
 }
 

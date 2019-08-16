@@ -15,12 +15,15 @@ function createModelSt() {
         grpIds : [],
         grpWts : [],
         allGrpNms : [],
-        allGrpWts: []
+        allGrpWts: [],
+        shapes : [],
+        shapeNms : []
     };
 }
 
 function createModelBuffersSt(gl) {
     return {
+        loaded : false,
         vao : null, vao_tf : null,
         vbos : [], vbos_tf : [],
         elo : null,
@@ -28,11 +31,14 @@ function createModelBuffersSt(gl) {
         grpWt : null,
         vcnt : 0,
         tcnt : 0,
+        data : null,
         bindGL : function() {
+            if (!this.loaded) return;
             gl.bindVertexArray(this.vao);
             this.elo.bindGL();
         },
         bindAndDrawGL : function() {
+            if (!this.loaded) return;
             this.bindGL();
             gl.drawElements(gl.TRIANGLES, this.tcnt * 3, gl.UNSIGNED_SHORT, 0);
         }
@@ -55,6 +61,7 @@ function genModelBuffers(gl, model) {
     bufs.vao = vao;
     bufs.vbos = [ vb, nb, ub ];
     bufs.elo = tb;
+    bufs.data = model;
     
     if (model.skinned) {
         

@@ -41,3 +41,7 @@ function vec3_mulf(v, f) {
         v[2] * f
     );
 }
+
+function vec3_tostring(v) {
+    return '(' + v[0].toFixed(3) + ',' + v[1].toFixed(3) + ',' + v[2].toFixed(3) + ')';
+}

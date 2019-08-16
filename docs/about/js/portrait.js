@@ -37,11 +37,14 @@ function portrait_main() {
 
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clearDepth(1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.disable(gl.BLEND);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
 
     const tex = createTexture(gl, 'img/body.png', gl.RGBA, gl.UNSIGNED_BYTE);
     const tex2 = createTexture(gl, 'img/hair.jpg', gl.RGBA, gl.UNSIGNED_BYTE);
-    const tex3 = createTexture(gl, 'img/uniform.png', gl.RGBA, gl.UNSIGNED_BYTE);
+    const tex3 = createTexture(gl, 'img/summer.png', gl.RGBA, gl.UNSIGNED_BYTE);
 
     loadBlend(gl,  'data/kcschan');
 
@@ -49,10 +52,9 @@ function portrait_main() {
     
     const skinProg = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "dats", "mats", "shps", "shpWs"]);
 
-    const model = loadObj(gl, "data/kcschan.obj");
-    const model2 = loadObj(gl, "data/hair.obj");
+    const modelc = loadCMesh(gl, "data/body.cmesh");
     const model2c = loadCMesh(gl, "data/hair.cmesh");
-    const model3 = loadObj(gl, "data/uniform.obj");
+    const model3c = loadCMesh(gl, "data/summer.cmesh");
     
     var P = mat4.create();
     mat4.fromScaling(P, vec3.fromValues(canvas.clientHeight * 1.0 / canvas.clientWidth, 1, 1));
@@ -62,11 +64,12 @@ function portrait_main() {
     const rotSp = 2;
     
     function render(now) {
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         now *= 0.001;  // convert to seconds
         const deltaTime = now - then;
         then = now;
 
-        const scl = 2.6;
+        const scl = 1/3.0;
 
         if (portrait_turn_left)
             rot -= rotSp * deltaTime;
@@ -76,25 +79,21 @@ function portrait_main() {
         var MV = mat4.create();
         var MV2 = mat4.create();
         mat4.fromYRotation(MV, rot);
-        mat4.fromScaling(MV2, vec3.fromValues(-scl, scl, scl));
+        mat4.fromScaling(MV2, vec3.fromValues(scl, scl, scl));
         mat4.mul(MV, MV2, MV);
-        mat4.fromTranslation(MV2, vec3.fromValues(0, -1.0, 0));
+        mat4.fromTranslation(MV2, vec3.fromValues(0, -5.0, 0));
         mat4.mul(MV, MV2, MV);
         var MVP = mat4.create();
         mat4.mul(MVP, P, MV);
 
-        gl.disable(gl.BLEND);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
-
         prog.bind();
         gl.uniformMatrix4fv(prog.uniforms[0], false, MVP);
         tex.bind(prog.uniforms[1], 0);
-        model.bindAndDrawGL();
+        modelc.bindAndDrawGL();
         tex2.bind(prog.uniforms[1], 0);
-        model2.bindAndDrawGL();
+        model2c.bindAndDrawGL();
         tex3.bind(prog.uniforms[1], 0);
-        model3.bindAndDrawGL();
+        model3c.bindAndDrawGL();
     
         requestAnimationFrame(render);
     }

@@ -42,7 +42,7 @@ function loadCMesh(gl, path, onload = null) {
                 //console.log("!>>tc " + modelGL.tcnt.toString());
                 for (var tc = 0; tc < modelGL.tcnt; tc++) {
                     off += 1; //material id
-                    model.norms.push(
+                    model.tris.push(
                         dv.getInt32(off, true),
                         dv.getInt32(off + 4, true),
                         dv.getInt32(off + 8, true)
@@ -54,7 +54,7 @@ function loadCMesh(gl, path, onload = null) {
                 for (var vc = 0; vc < modelGL.vcnt; vc++) {
                     model.uvs.push(
                         dv.getFloat32(off, true),
-                        dv.getFloat32(off + 4, true)
+                        1.0 - dv.getFloat32(off + 4, true)
                     ); off += 8;
                 }
                 if (ucnt > 1) {
@@ -84,6 +84,25 @@ function loadCMesh(gl, path, onload = null) {
                     model.allGrpWts.push(gws);
                 }
             }
+            else if (cdtype == 'S') {
+                var scnt = dv.getInt8(off, true); off += 1;
+                for (let si = 0; si < scnt; si++) {
+                    const snm = readString(new DataView(bstrm, off, 50));
+                    model.shapeNms.push(snm);
+                    off += snm.length + 1;
+                    //console.log("!>>shp " + snm);
+                    
+                    model.shapes.push([]);
+                    var ss = model.shapes[si];
+                    for (var vc = 0; vc < modelGL.vcnt; vc++) {
+                        ss.push(
+                            dv.getFloat32(off, true),
+                            dv.getFloat32(off + 4, true),
+                            dv.getFloat32(off + 8, true)
+                        ); off += 12;
+                    }
+                }
+            }
             else {
                 console.error("cmesh loader: unknown char " + dtype.toString());
                 break;
@@ -91,6 +110,9 @@ function loadCMesh(gl, path, onload = null) {
             if (off == dv.byteLength) break;
             dtype = dv.getInt8(off, true); off += 1;
         }
+        
+        updateModelBuffers(gl, modelGL, model);
+        modelGL.loaded = true;
         if (onload) {
             onload(modelGL);
         }

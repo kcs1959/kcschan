@@ -51,3 +51,7 @@ function quat_lookAt(tarr, up) {
 
 	return rot;
 }
+
+function quat_tostring(v) {
+    return '(' + v[3].toFixed(3) + ',' + v[0].toFixed(3) + ',' + v[1].toFixed(3) + ',' + v[2].toFixed(3) + ')';
+}

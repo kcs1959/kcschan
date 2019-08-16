@@ -37,6 +37,10 @@ function createSceneObject(name = "unnamed object") {
                 if (res != null) return res;
             }
             return null;
+        },
+        addComponent : function(c) {
+            this.components.push(c);
+            c.obj = this;
         }
     };
 }

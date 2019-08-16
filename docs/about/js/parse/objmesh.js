@@ -81,6 +81,7 @@ function loadObj(gl, path) {
         });
 
         updateModelBuffers(gl, modelGL, model);
+        modelGL.loaded = true;
         console.log('loaded obj file ' + path + ' (' + _verts.length.toString() + ' vertices, ' + triCnt.toString() + ' triangles)');
     });
 

@@ -11,6 +11,9 @@ function createArmatureBone(nm) {
 
 function createArmature() {
     return {
+        name : "Armature",
+        ctype : 1,
+        obj : null,
         anim : null,
         bones : []
     };
