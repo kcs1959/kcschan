@@ -46,16 +46,14 @@ function portrait_main() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    loadBlend(gl, 'data/kcschan');
+    const anim = loadAnimClip(gl, 'data/kcschan_blend/idle1.animclip');
+
+    loadBlend(gl, 'data/kcschan', function() {
+        activeScene.objects[0].findByNm("Armature").components[0].anim = anim;
+    });
 
     const prog = createProgram(gl, 'glsl/unlit.vs', 'glsl/unlit.fs', ["MVP", "tex"]);
-    
-    const skinProg = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "dats", "mats", "shps", "shpWs"]);
-
-    const modelc = loadCMesh(gl, "data/body.cmesh");
-    const model2c = loadCMesh(gl, "data/hair.cmesh");
-    const model3c = loadCMesh(gl, "data/summer.cmesh");
-    
+    const skinProg = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "dats", "mats", "shps", "shpWs"]);    
    
     var then = 0;
     var rot = 0;
@@ -97,21 +95,6 @@ function portrait_main() {
         prog.bind();
         renderScene(gl, P, prog);
         
-        /*
-        var MV = mat4.create();
-        mat4.fromTranslation(MV, vec3.fromValues(0, -11.0, 0));
-        var MVP = mat4.create();
-        mat4.mul(MVP, P, MV);
-
-        prog.bind();
-        gl.uniformMatrix4fv(prog.uniforms[0], false, MVP);
-        tex.bind(prog.uniforms[1], 0);
-        modelc.bindAndDrawGL();
-        tex2.bind(prog.uniforms[1], 0);
-        model2c.bindAndDrawGL();
-        tex3.bind(prog.uniforms[1], 0);
-        model3c.bindAndDrawGL();
-        */
         requestAnimationFrame(render);
     }
 

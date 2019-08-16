@@ -132,7 +132,7 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback) {
     }
 }
 
-function loadBlend(gl, name) {
+function loadBlend(gl, name, onload = null) {
     const path = name + ".blend.bin";
     const fd = name + "_blend/";
     loadString(path, function(str) {
@@ -153,6 +153,9 @@ function loadBlend(gl, name) {
             });
             document.querySelector("#clothes_list").innerHTML = clths;
             document.querySelector("#debug_scenetree").innerHTML = activeScene.tree();
+
+            if (onload)
+                onload();
         });
     });
 }

@@ -11,7 +11,10 @@ function loadArmatureBone(gl, bstrm, dv, off, arm, po) {
         bn.parentBn = arm.bones.find(function(b) {
             return b.name == wd;
         });
-        bn.fullName = bn.parentBn.fullName + "/" + bn.name;
+        bn.fullName = bn.parentBn.fullName + bn.name + "/";
+    }
+    else {
+        bn.fullName = bn.name + "/";
     }
     const pos = vec3.fromValues(
         dv.getFloat32(off, true),
