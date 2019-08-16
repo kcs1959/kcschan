@@ -9,7 +9,7 @@ function createTextureSt(gl, tex) {
     };
 }
 
-function createTexture(gl, path, fmt, type) {
+function createTexture(gl, path, callback=null, fmt=gl.RGBA, type=gl.UNSIGNED_BYTE) {
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
     const pixel = new Uint8Array([255, 0, 0, 255])
@@ -23,6 +23,9 @@ function createTexture(gl, path, fmt, type) {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        if (callback) {
+            callback();
+        }
     }
     img.onerror = function() {
         console.log('Cannot load image ' + path + '!');

@@ -11,9 +11,11 @@
     <button onmousedown="portrait_turn_left = true" onmouseup="portrait_turn_left = false">turn left </button>
     <button onmousedown="portrait_turn_right = true" onmouseup="portrait_turn_right = false">turn right</button>
 
+    <div id="clothes_list">
+    </div>
 
     <!-- debug information -->
-    <div class="debug" style="padding-left:800px;height:800px;height:800px;overflow-y:scroll;scrollbar-width:none;">
+    <div class="debug" style="padding-left:800px;height:800px;overflow-y:scroll;scrollbar-width:none;position:absolute;top:10px;z-index:-2">
         <div id="debug_scenetree" style="white-space: pre-line; font-family:'Lucida Console', Monaco, monospace;font-size: x-small;">Scene Tree</div>
     </div>
 </body>

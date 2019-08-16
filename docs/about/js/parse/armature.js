@@ -32,8 +32,6 @@ function loadArmatureBone(gl, bstrm, dv, off, arm, po) {
     const rot = quat_lookAt(dir, fwd);
     off += 1; //mask
 
-    console.log("!>>" + bn.name + ": " + vec3_tostring(dir) + vec3_tostring(fwd));
-
     arm.bones.push(bn);
     bn.length = vec3.length(dir);
     bn.object = createSceneObject(bn.name);

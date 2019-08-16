@@ -4,6 +4,7 @@ function renderScene(gl, P, prog) {
 
     var seek = function(oo) {
         oo.forEach(function(o) {
+            if (!o.enabled) return;
             o.components.forEach(function(c) {
                 if (c.ctype == 2) {
                     mrs.push(c);
@@ -23,12 +24,14 @@ function renderScene(gl, P, prog) {
         const MV = mr.obj.worldMatrix;
         mat4.mul(MVP, P, MV);
         gl.uniformMatrix4fv(prog.uniforms[0], false, MVP);
+        mr.tex.bind(prog.uniforms[1], 0);
         mr.mesh.bindAndDrawGL();
     });
-    smrs.forEach(function(mr) {
-        const MV = mr.obj.worldMatrix;
+    smrs.forEach(function(smr) {
+        const MV = smr.obj.worldMatrix;
         mat4.mul(MVP, P, MV);
         gl.uniformMatrix4fv(prog.uniforms[0], false, MVP);
-        mr.mesh.bindAndDrawGL();
+        smr.tex.bind(prog.uniforms[1], 0);
+        smr.mesh.bindAndDrawGL();
     });
 }

@@ -11,13 +11,34 @@ function createSceneObject(name = "unnamed object") {
         parentObj : null,
         childObjs : [],
         
+        getWorldPos : function(v) {
+            if (!this.parentObj) return this.position;
+            else {
+                return mat_vec3_w(this.parentObj.worldMatrix, v, 1);
+            }
+        },
         setWorldPos : function(v) {
             if (!this.parentObj) this.position = v;
             else {
                 var im = mat4.create();
                 mat4.invert(im, this.parentObj.worldMatrix);
-                position = mat_vec3_w(im, v, 1);
+                this.position = mat_vec3_w(im, v, 1);
             }
+        },
+        getWorldRot : function() {
+            var o = this;
+            var res = quat.create();
+            while (o) {
+                quat.mul(res, o.rotation, res);
+                o = o.parentObj;
+            }
+            return res;
+        },
+        setWorldRot : function(r) {
+            if (!this.parentObj) this.rotation = r;
+            var pr = this.parentObj.getWorldRot();
+            quat.invert(pr, pr);
+            quat.mul(this.rotation, pr, r);
         },
         updateMatrices : function() {
             mat4.fromRotationTranslationScale(this.localMatrix, this.rotation, this.position, this.scale);
@@ -34,9 +55,13 @@ function createSceneObject(name = "unnamed object") {
                 o.updateWorldMatrix();
             });
         },
-        addChild : function(o) {
+        addChild : function(o, keeplocal = true) {
             this.childObjs.push(o);
             o.parentObj = this;
+            if (!keeplocal) {
+                o.setWorldPos(o.position);
+                o.setWorldRot(o.rotation);
+            }
         },
         findByNm : function(nm) {
             if (this.name == nm) return this;

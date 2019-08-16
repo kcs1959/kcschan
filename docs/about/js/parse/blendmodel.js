@@ -1,23 +1,46 @@
-function loadMeshMeta(gl, path, obj, callback) {
+function registerMeshNm(gl, obj) {
+    const nms = obj.name.split('_');
+    if (nms[0] == 'clth') {
+        const i = portrait_clothes_list.indexOf(nms[1]);
+        if (i == -1) {
+            portrait_clothes_list.push(nms[1]);
+            portrait_clothes_objs.push([obj]);
+            if (portrait_clothes_list.length != portrait_clothes_id + 1) {
+                obj.enabled = false;
+            }
+        }
+        else {
+            portrait_clothes_objs[i].push(obj);
+            if (i != portrait_clothes_id) {
+                obj.enabled = false;
+            }
+        }
+    }
+    return (nms.length > 1) ? nms[1] : nms[0];
+}
+
+function loadMeshMeta(gl, path, fd, obj, callback) {
     loadCMesh(gl, path, function(mesh) {
         const mr = createMeshRenderer();
         obj.addComponent(mr);
         mr.mesh = mesh;
-        callback();
+        const nm = registerMeshNm(gl, obj);
+        mr.tex = createTexture(gl, fd + nm + ".jpg", callback);
     });
 }
 
-function loadSkinnedMeshMeta(gl, path, obj, arm, callback) {
+function loadSkinnedMeshMeta(gl, path, fd, obj, arm, callback) {
     loadCMesh(gl, path, function(mesh) {
         const mr = createSkinnedMeshRenderer();
         obj.addComponent(mr);
         mr.mesh = mesh;
         mr.arma = obj.parentObj.findByNm(arm).components[0];
-        callback();
+        const nm = registerMeshNm(gl, obj);
+        mr.tex = createTexture(gl, fd + nm + ".jpg", callback);
     });
 }
 
-function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
+function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback) {
     if (i == strs.length) {
         if (callback)
             callback();
@@ -85,6 +108,7 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
             baseObj.findByNm(ss[0]).findByNm(ss[1]).addChild(obj);
         }
         obj.setWorldPos(obj.position);
+        obj.setWorldRot(obj.rotation);
     }
     else {
         baseObj.addChild(obj);
@@ -96,13 +120,13 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback = null) {
             _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
         );
     }
-    else if (partp == 1) {
-        loadMeshMeta(gl, fd + obj.name + ".mesh.meta", obj, () =>
+    else if (partp == 2) {
+        loadSkinnedMeshMeta(gl, fd + obj.name + ".mesh.meta", fd, obj, pnm, () =>
             _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
         );
     }
     else {
-        loadSkinnedMeshMeta(gl, fd + obj.name + ".mesh.meta", obj, pnm, () =>
+        loadMeshMeta(gl, fd + obj.name + ".mesh.meta", fd, obj, () =>
             _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
         );
     }
@@ -123,6 +147,11 @@ function loadBlend(gl, name) {
         
         _loadBlendEntry(gl, baseObj, allObjs, strs, 1, fd, function() {
             activeScene.objects.push(baseObj);
+            var clths = "";
+            portrait_clothes_list.forEach(function(s, i) {
+                clths += "<input type='radio' name='clth' onclick='portrait_clothes_id=" + i.toString() + ((!i) ? "' checked>" : "'>") + s + "<br/>";
+            });
+            document.querySelector("#clothes_list").innerHTML = clths;
             document.querySelector("#debug_scenetree").innerHTML = activeScene.tree();
         });
     });

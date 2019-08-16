@@ -7,6 +7,8 @@ var portrait_turn_left = false;
 var portrait_turn_right = false;
 
 var portrait_clothes_id = 0;
+var portrait_clothes_list = [];
+var portrait_clothes_objs = [];
 
 portrait_main();
 
@@ -44,11 +46,7 @@ function portrait_main() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    const tex = createTexture(gl, 'img/body.png', gl.RGBA, gl.UNSIGNED_BYTE);
-    const tex2 = createTexture(gl, 'img/hair.jpg', gl.RGBA, gl.UNSIGNED_BYTE);
-    const tex3 = createTexture(gl, 'img/summer.png', gl.RGBA, gl.UNSIGNED_BYTE);
-
-    loadBlend(gl,  'data/kcschan');
+    loadBlend(gl, 'data/kcschan');
 
     const prog = createProgram(gl, 'glsl/unlit.vs', 'glsl/unlit.fs', ["MVP", "tex"]);
     
@@ -71,23 +69,32 @@ function portrait_main() {
         const deltaTime = now - then;
         then = now;
 
-        const scl = 0.15;
+        const scl = 0.3;
+        const y = -1;
 
         if (portrait_turn_left)
-            rot -= rotSp * deltaTime;
-        if (portrait_turn_right)
             rot += rotSp * deltaTime;
+        if (portrait_turn_right)
+            rot -= rotSp * deltaTime;
+            
+        if (_portrait_clothes_id != portrait_clothes_id) {
+            _portrait_clothes_id = portrait_clothes_id;
+            portrait_clothes_objs.forEach(function(oo, i) {
+                oo.forEach(function(o) {
+                    o.enabled = _portrait_clothes_id == i;
+                });
+            });
+        }
 
         var P = mat4.create();
         var P2 = mat4.create();
-        mat4.fromScaling(P, vec3.fromValues(canvas.clientHeight * 1.0 / canvas.clientWidth, 1, 1));
+        mat4.fromScaling(P, vec3.fromValues(canvas.clientHeight * scl / canvas.clientWidth, scl, scl));
         mat4.fromYRotation(P2, rot);
         mat4.mul(P, P2, P);
-        mat4.fromScaling(P2, vec3.fromValues(scl, scl, scl));
+        mat4.fromTranslation(P2, vec3.fromValues(0, y, 0));
         mat4.mul(P, P2, P);
 
         prog.bind();
-        tex.bind(prog.uniforms[1], 0);
         renderScene(gl, P, prog);
         
         /*
