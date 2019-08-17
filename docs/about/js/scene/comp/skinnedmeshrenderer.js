@@ -11,23 +11,32 @@ function createSkinnedMeshRenderer() {
         datTex : null,
 
         createDatTex : function(gl) {
+            var noweights = 0;
             const dat = new Float32Array(this.mesh.vcnt * 8);
             for (let i = 0; i < this.mesh.vcnt; i++) {
                 var a = 0;
                 var sw = 0;
-                for (let g = 0; g < this.mesh.allGrpWts; g++) {
-                    const bi = this.arma.mapbone(this.mesh.allGrpNms);
+                const ws = this.mesh.data.allGrpWts[i];
+                for (let g = 0; g < ws.length; g++) {
+                    const w = ws[g];
+                    if (w == 0) continue;
+                    const bi = this.arma.mapBone(this.mesh.data.allGrpNms[w.id]);
                     if (bi == -1) continue;
                     dat[i*8 + a] = bi;
-                    dat[i*8 + 4 + a] = this.mesh.allGrpWts[g];
+                    dat[i*8 + 4 + a] = w.val;
                     a ++;
-                    sw += this.mesh.allGrpWts[g];
+                    sw += w.val;
                     if (a >= 4) break;
                 }
+                if (!sw) noweights ++;
                 for (let n = 0; n < a; n++) {
                     dat[i*8 + 4 + n] /= sw;
                 }
             }
+            if (noweights > 0) {
+                console_warn(noweights + " vertices with no weights assigned!");
+            }
+            console_log("gen for " + this.obj.name);
             this.datTex = createBufTexture(gl, dat);
         },
         skin : function(gl) {

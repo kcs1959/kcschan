@@ -79,8 +79,8 @@ function loadCMesh(gl, path, skin = false, onload = null) {
                     gcnt = dv.getInt8(off, true); off += 1;
                     while (gcnt > 0) {
                         var gw = createModelGroupWeightSt();
-                        var gwid = dv.getUint8(off, true); off += 1;
-                        var gwvl = dv.getFloat32(off, true); off += 4;
+                        gw.id = dv.getUint8(off, true); off += 1;
+                        gw.val = dv.getFloat32(off, true); off += 4;
                         gws.push(gw);
                         gcnt -= 1;
                     }

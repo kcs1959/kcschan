@@ -40,7 +40,7 @@ void main() {
     vec2 in_uv = _texelFetch(uvs, gid).xy;
     vec4 dt_mats = _texelFetch(dats, gid * 2);
     vec4 dt_ws = _texelFetch(dats, gid * 2 + 1);
-    mat4 m = buf2mat(mats, int(dt_mats[0]))*dt_ws[0]
+    mat4 m = buf2mat(mats, int(dt_mats[0]))*dt_ws[0];
         + buf2mat(mats, int(dt_mats[1]))*dt_ws[1]
         + buf2mat(mats, int(dt_mats[2]))*dt_ws[2]
         + buf2mat(mats, int(dt_mats[3]))*dt_ws[3];
@@ -51,7 +51,7 @@ void main() {
     //}
     p.w = 1.0;
     p = m * p;
-    outPos = in_pos;
+    outPos = p.xyz / p.w;
     outNrm = (m * n).xyz;
     outUv = in_uv;
     gl_Position.xyz = outPos; gl_Position.w = 1.0;

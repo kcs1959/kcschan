@@ -12,8 +12,6 @@ function createModelSt() {
         tris : [],
         uvs : [],
         skinned : false,
-        grpIds : [],
-        grpWts : [],
         allGrpNms : [],
         allGrpWts: [],
         shapes : [],

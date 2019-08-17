@@ -54,26 +54,34 @@ function portrait_main() {
 
     const anim = loadAnimClip(gl, 'data/kcschan_blend/idle1.animclip');
 
+    var hb = null;
+    var bb = null;
+
     loadBlend(gl, 'data/kcschan', function() {
-        activeScene.objects[0].findByNm("Armature").components[0].anim = anim;
+        const arm = activeScene.objects[0].findByNm("Armature");
+        const arma = arm.components[0];
+        arma.anim = anim;
+        arma.initMats();
+        hb = arm.findByNm("head");
+        bb = arm.findByNm("body1");
     });
 
     const prog = createProgram(gl, 'glsl/unlit.vs', 'glsl/unlit.fs', ["MVP", "tex"]);
     skinning_shad = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "shpCount", "poss", "nrms", "uvs", "dats", "mats", "shps", "shpWs"]);    
-   
+
     var then = 0;
     var rot = 0;
     const rotSp = 2;
 
     var _portrait_clothes_id = portrait_clothes_id;
-    
+
     function render(now) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         now *= 0.001;  // convert to seconds
         const deltaTime = now - then;
         then = now;
 
-        const scl = 0.3;
+        const scl = 0.25;
         const y = -1;
 
         if (portrait_turn_left)
@@ -88,6 +96,13 @@ function portrait_main() {
                     o.enabled = _portrait_clothes_id == i;
                 });
             });
+        }
+
+        if (hb) {
+            quat.fromEuler(hb.rotation, Math.sin(now*1.5 - 1.5) * 1 - 9, 0, 0);
+            quat.fromEuler(bb.rotation, Math.sin(now*1.5) * 1 + 10, 0, 0);
+            hb.updateMatrices();
+            bb.updateMatrices();
         }
 
         var P = mat4.create();

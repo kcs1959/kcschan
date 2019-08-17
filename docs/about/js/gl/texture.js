@@ -1,8 +1,8 @@
 function createTextureSt(gl, tex, w, h, fmt, type) {
     return {
         tex : tex,
-        w : 0,
-        h : 0,
+        w : w,
+        h : h,
         fmt : fmt,
         type : type,
         bind : function(loc, slot) {
