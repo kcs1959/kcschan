@@ -39,11 +39,14 @@ function createSkinnedMeshRenderer() {
             ]);
             gl.uniform1i(skinning_shad.uniforms[0], this.mesh.vcnt);
             gl.uniform1i(skinning_shad.uniforms[1], 0);
-            this.datTex.bind(skinning_shad.uniforms[2], 0);
-            this.arma.matTex.bind(skinning_shad.uniforms[3], 1);
-            gl.bindVertexArray(this.mesh.vao_tf);
-            this.mesh.elo.bindGL();
-            skinning_shad.execE(this.mesh.vcnt);
+            this.mesh.vbosTex[0].bind(skinning_shad.uniforms[2], 0);
+            this.mesh.vbosTex[1].bind(skinning_shad.uniforms[3], 1);
+            this.mesh.vbosTex[2].bind(skinning_shad.uniforms[4], 2);
+            this.datTex.bind(skinning_shad.uniforms[5], 3);
+            this.arma.matTex.bind(skinning_shad.uniforms[6], 4);
+            gl.bindVertexArray(empty_vao);
+            skinning_shad.exec(this.mesh.vcnt);
+            skinning_shad.unbind(3);
         }
     };
 }

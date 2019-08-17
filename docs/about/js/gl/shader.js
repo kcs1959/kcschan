@@ -4,7 +4,7 @@ function createShader(gl, type, src) {
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.log('Error compiling shader: ' + gl.getShaderInfoLog(shader));
+        console_log('Error compiling shader: ' + gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
     }
@@ -40,17 +40,15 @@ function createTFProgram(gl, vs, fs, onms, vrs) {
                 });
             }
         },
-        execA : function(n) {
+        unbind : function(n) {
+            for (let a = 0; a < n; a++) {
+                gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, a, null);
+            }
+        },
+        exec : function(n) {
             gl.enable(gl.RASTERIZER_DISCARD);
             gl.beginTransformFeedback(gl.POINTS);
             gl.drawArrays(gl.POINTS, 0, n);
-            gl.endTransformFeedback();
-            gl.disable(gl.RASTERIZER_DISCARD);
-        },
-        execE : function(n, tp = gl.UNSIGNED_SHORT) {
-            gl.enable(gl.RASTERIZER_DISCARD);
-            gl.beginTransformFeedback(gl.POINTS);
-            gl.drawElements(gl.POINTS, n, tp, 0);
             gl.endTransformFeedback();
             gl.disable(gl.RASTERIZER_DISCARD);
         }
@@ -72,7 +70,7 @@ function createTFProgram(gl, vs, fs, onms, vrs) {
             gl.deleteShader(fsh);
 
             if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-                console.log('Error linking program: ' + gl.getProgramInfoLog(prog));
+                console_log('Error linking program: ' + gl.getProgramInfoLog(prog));
                 return null;
             }
 
@@ -106,7 +104,7 @@ function createProgram(gl, vs, fs, vrs) {
             gl.deleteShader(fsh);
 
             if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-                console.log('Error linking program: ' + gl.getProgramInfoLog(prog));
+                console_log('Error linking program: ' + gl.getProgramInfoLog(prog));
                 return null;
             }
 

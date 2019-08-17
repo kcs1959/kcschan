@@ -6,7 +6,7 @@ function loadAnimClip(gl, path, onload = null) {
         var decoder = new TextDecoder();
         const sig = decoder.decode(new DataView(bstrm, 0, 4));
         if (sig != "ANIM") {
-            console.log('unexpected animclip signature:"' + sig + '"');
+            console_log('unexpected animclip signature:"' + sig + '"');
             return;
         }
         off += 4;

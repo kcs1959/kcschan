@@ -46,7 +46,7 @@ function createArmature() {
                 buf.set(b.animMat, i * 16);
             });
             if (!this.matTex) {
-                this.matTex = createBufTexture(gl, buf, gl.RGBA, gl.FLOAT);
+                this.matTex = createBufTexture(gl, buf);
             }
             else {
                 updateTexture(gl, this.matTex, buf);

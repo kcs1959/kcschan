@@ -14,12 +14,14 @@ portrait_main();
 
 var preupdate_comps = [];
 
+var empty_vao = null;
+
 function portrait_main() {
     const canvas = document.querySelector("#portrait_canvas");
     const gl = canvas.getContext("webgl2");
 
     if (gl === null) {
-        console.log("Cannot initialize webgl2!");
+        console_log("Cannot initialize webgl2!");
         return;
     }
 
@@ -48,6 +50,8 @@ function portrait_main() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
+    empty_vao = gl.createVertexArray();
+
     const anim = loadAnimClip(gl, 'data/kcschan_blend/idle1.animclip');
 
     loadBlend(gl, 'data/kcschan', function() {
@@ -55,7 +59,7 @@ function portrait_main() {
     });
 
     const prog = createProgram(gl, 'glsl/unlit.vs', 'glsl/unlit.fs', ["MVP", "tex"]);
-    skinning_shad = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "dats", "mats", "shps", "shpWs"]);    
+    skinning_shad = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "shpCount", "poss", "nrms", "uvs", "dats", "mats", "shps", "shpWs"]);    
    
     var then = 0;
     var rot = 0;

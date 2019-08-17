@@ -66,7 +66,7 @@ function loadArmature(gl, path, obj, onload = null) {
         var decoder = new TextDecoder();
         const sig = decoder.decode(new DataView(bstrm, 0, 3));
         if (sig != "ARM") {
-            console.log('unexpected armature signature:"' + sig + '"');
+            console_log('unexpected armature signature:"' + sig + '"');
             return;
         }
         off += 4;

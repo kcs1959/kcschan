@@ -20,7 +20,7 @@ function registerMeshNm(gl, obj) {
 }
 
 function loadMeshMeta(gl, path, fd, obj, callback) {
-    loadCMesh(gl, path, function(mesh) {
+    loadCMesh(gl, path, false, function(mesh) {
         const mr = createMeshRenderer();
         obj.addComponent(mr);
         mr.mesh = mesh;
@@ -30,7 +30,7 @@ function loadMeshMeta(gl, path, fd, obj, callback) {
 }
 
 function loadSkinnedMeshMeta(gl, path, fd, obj, arm, callback) {
-    loadCMesh(gl, path, function(mesh) {
+    loadCMesh(gl, path, true, function(mesh) {
         const mr = createSkinnedMeshRenderer();
         obj.addComponent(mr);
         mr.mesh = mesh;
@@ -139,7 +139,7 @@ function loadBlend(gl, name, onload = null) {
     loadString(path, function(str) {
         var strs = splitLines(str);
         if (strs[0] != "KTM123") {
-            console.log('unexpected model signature:"' + strs[0] + '"');
+            console_log('unexpected model signature:"' + strs[0] + '"');
             return;
         }
         

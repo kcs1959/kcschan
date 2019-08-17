@@ -36,5 +36,6 @@ function renderScene(gl, P, prog) {
         gl.uniformMatrix4fv(prog.uniforms[0], false, MVP);
         smr.tex.bind(prog.uniforms[1], 0);
         smr.mesh.bindAndDrawGL();
+        smr.mesh.unbindGL();
     });
 }

@@ -24,11 +24,10 @@ function createModelSt() {
 function createModelBuffersSt(gl) {
     return {
         loaded : false,
-        vao : null, vao_tf : null,
-        vbos : [], vbos_tf : [],
+        vao : null,
+        vbos : [],
+        vbosTex : [],
         elo : null,
-        grpId : null,
-        grpWt : null,
         vcnt : 0,
         tcnt : 0,
         data : null,
@@ -36,6 +35,11 @@ function createModelBuffersSt(gl) {
             if (!this.loaded) return;
             gl.bindVertexArray(this.vao);
             this.elo.bindGL();
+        },
+        unbindGL : function() {
+            if (!this.loaded) return;
+            gl.bindVertexArray(null);
+            this.elo.unbindGL();
         },
         bindAndDrawGL : function() {
             if (!this.loaded) return;
@@ -48,58 +52,55 @@ function createModelBuffersSt(gl) {
 function genModelBuffers(gl, model) {
     const vao = gl.createVertexArray();
 
-    const vb = createBuffer(gl, new Float32Array(model.verts));
-    const nb = createBuffer(gl, new Float32Array(model.norms));
-    const ub = createBuffer(gl, new Float32Array(model.uvs));
+    const v = new Float32Array(model.verts);
+    const n = new Float32Array(model.norms);
+    const u = new Float32Array(model.uvs);
+
+    const vb = createBuffer(gl, v);
+    const nb = createBuffer(gl, n);
+    const ub = createBuffer(gl, u);
     const tb = createBuffer(gl, new Uint16Array(model.tris), gl.ELEMENT_ARRAY_BUFFER);
 
     attachBuffer(gl, vao, vb, 0, 3);
     attachBuffer(gl, vao, nb, 1, 3);
     attachBuffer(gl, vao, ub, 2, 2);
+    ub.unbindGL();
 
     bufs = createModelBuffersSt(gl);
+    bufs.vcnt = v.length / 3;
+    bufs.tcnt = model.tris.length / 3;
     bufs.vao = vao;
     bufs.vbos = [ vb, nb, ub ];
     bufs.elo = tb;
     bufs.data = model;
     
     if (model.skinned) {
-        const vao2 = gl.createVertexArray();
-        const vb2 = createBuffer(gl, new Float32Array(model.verts));
-        const nb2 = createBuffer(gl, new Float32Array(model.norms));
-        const ub2 = createBuffer(gl, new Float32Array(model.uvs));
-        
-        attachBuffer(gl, vao2, vb2, 0, 3);
-        attachBuffer(gl, vao2, nb2, 1, 3);
-        attachBuffer(gl, vao2, ub2, 2, 2);
-        
-        const gid = createBuffer(gl, new Int32Array(model.grpIds));
-        const gwt = createBuffer(gl, new Float32Array(model.grpWts));
+        const vb2 = createBufTexture(gl, v, 3, gl.RGB32F, gl.RGB);
+        const nb2 = createBufTexture(gl, n, 3, gl.RGB32F, gl.RGB);
+        const ub2 = createBufTexture(gl, u, 2, gl.RG32F, gl.RG);
 
-        bufs.vao_tf = vao2;
-        bufs.vbos_tf = [ vb2, nb2, ub2 ];
-        bufs.grpId = gid;
-        bufs.grpWt = gwt;
+        bufs.vbosTex = [ vb2, nb2, ub2 ];
     }
     
     return bufs;
 }
 
 function updateModelBuffers(gl, modelGL, model) {
+    const v = new Float32Array(model.verts);
+    const n = new Float32Array(model.norms);
+    const u = new Float32Array(model.uvs);
     if (model.skinned) {
-        setBufferData(gl, modelGL.vbos_tf[0], new Float32Array(model.verts));
-        setBufferData(gl, modelGL.vbos_tf[1], new Float32Array(model.norms));
-        setBufferData(gl, modelGL.vbos_tf[2], new Float32Array(model.uvs));
-        attachBuffer(gl, modelGL.vao_tf, modelGL.vbos[0], 0, 3);
-        attachBuffer(gl, modelGL.vao_tf, modelGL.vbos[1], 1, 3);
-        attachBuffer(gl, modelGL.vao_tf, modelGL.vbos[2], 2, 2);
+        updateTexture(gl, modelGL.vbosTex[0], v);
+        updateTexture(gl, modelGL.vbosTex[1], n);
+        updateTexture(gl, modelGL.vbosTex[2], u);
     }
-    setBufferData(gl, modelGL.vbos[0], new Float32Array(model.verts));
-    setBufferData(gl, modelGL.vbos[1], new Float32Array(model.norms));
-    setBufferData(gl, modelGL.vbos[2], new Float32Array(model.uvs));
+    setBufferData(gl, modelGL.vbos[0], v);
+    setBufferData(gl, modelGL.vbos[1], n);
+    setBufferData(gl, modelGL.vbos[2], u);
     attachBuffer(gl, modelGL.vao, modelGL.vbos[0], 0, 3);
     attachBuffer(gl, modelGL.vao, modelGL.vbos[1], 1, 3);
     attachBuffer(gl, modelGL.vao, modelGL.vbos[2], 2, 2);
+    modelGL.vbos[2].unbindGL();
     setBufferData(gl, modelGL.elo, new Uint16Array(model.tris), gl.ELEMENT_ARRAY_BUFFER);
     modelGL.vcnt = model.verts.length / 3;
     modelGL.tcnt = model.tris.length / 3;

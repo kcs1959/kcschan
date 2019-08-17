@@ -3,13 +3,12 @@ precision mediump float;
 
 const int TEXBUF_MAXSIZE = 1024;
 
-layout (location=0) in vec3 in_pos;
-layout (location=1) in vec3 in_nrm;
-layout (location=2) in vec2 in_uv;
-
 uniform int vertCount;
 uniform int shpCount;
 
+uniform sampler2D poss;
+uniform sampler2D nrms;
+uniform sampler2D uvs;
 uniform sampler2D dats;
 uniform sampler2D mats;
 uniform sampler2D shps;
@@ -36,6 +35,9 @@ mat4 buf2mat (sampler2D buf, int id) {
 
 void main() {
     int gid = gl_VertexID;
+    vec3 in_pos = _texelFetch(poss, gid).xyz;
+    vec3 in_nrm = _texelFetch(nrms, gid).xyz;
+    vec2 in_uv = _texelFetch(uvs, gid).xy;
     vec4 dt_mats = _texelFetch(dats, gid * 2);
     vec4 dt_ws = _texelFetch(dats, gid * 2 + 1);
     mat4 m = buf2mat(mats, int(dt_mats[0]))*dt_ws[0]
@@ -49,8 +51,8 @@ void main() {
     //}
     p.w = 1.0;
     p = m * p;
-    gl_Position = (p / p.w);
-    outPos = gl_Position.xyz;
+    outPos = in_pos;
     outNrm = (m * n).xyz;
     outUv = in_uv;
+    gl_Position.xyz = outPos; gl_Position.w = 1.0;
 }

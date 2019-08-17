@@ -1,6 +1,6 @@
-function loadCMesh(gl, path, onload = null) {
+function loadCMesh(gl, path, skin = false, onload = null) {
     var model = createModelSt();
-    var modelGL = genModelBuffers(gl, model);
+    model.skinned = skin;
     
     loadBinary(path, function(bstrm) {
         var off = 0;
@@ -8,7 +8,7 @@ function loadCMesh(gl, path, onload = null) {
         var decoder = new TextDecoder();
         const sig = decoder.decode(new DataView(bstrm, 0, 6));
         if (sig != "KTO123") {
-            console.log('unexpected mesh signature:"' + sig + '"');
+            console_log('unexpected mesh signature:"' + sig + '"');
             return;
         }
         off += 6;
@@ -18,13 +18,16 @@ function loadCMesh(gl, path, onload = null) {
         var dv = new DataView(bstrm);
         var dtype = dv.getInt8(off, true); off += 1;
         
+        var _vcnt = 0;
+        var _tcnt = 0;
+
         while (dtype != 0) {
             const cdtype = String.fromCharCode(dtype);
-            //console.log("!>>" + (off - 1).toString() + " : " + cdtype);
+            //console_log("!>>" + (off - 1).toString() + " : " + cdtype);
             if (cdtype == 'V') {
-                modelGL.vcnt = dv.getInt32(off, true); off += 4;
-                //console.log("!>>vc " + modelGL.vcnt.toString());
-                for (var vc = 0; vc < modelGL.vcnt; vc++) {
+                _vcnt = dv.getInt32(off, true); off += 4;
+                //console_log("!>>vc " + modelGL.vcnt.toString());
+                for (var vc = 0; vc < _vcnt; vc++) {
                     model.verts.push(
                         dv.getFloat32(off, true),
                         dv.getFloat32(off + 4, true),
@@ -38,9 +41,9 @@ function loadCMesh(gl, path, onload = null) {
                 }
             }
             else if (cdtype == 'F') {
-                modelGL.tcnt = dv.getInt32(off, true); off += 4;
-                //console.log("!>>tc " + modelGL.tcnt.toString());
-                for (var tc = 0; tc < modelGL.tcnt; tc++) {
+                _tcnt = dv.getInt32(off, true); off += 4;
+                //console_log("!>>tc " + modelGL.tcnt.toString());
+                for (var tc = 0; tc < _tcnt; tc++) {
                     off += 1; //material id
                     model.tris.push(
                         dv.getInt32(off, true),
@@ -51,27 +54,27 @@ function loadCMesh(gl, path, onload = null) {
             }
             else if (cdtype == 'U') {
                 var ucnt = dv.getInt8(off, true); off += 1;
-                for (var vc = 0; vc < modelGL.vcnt; vc++) {
+                for (var vc = 0; vc < _vcnt; vc++) {
                     model.uvs.push(
                         dv.getFloat32(off, true),
                         1.0 - dv.getFloat32(off + 4, true)
                     ); off += 8;
                 }
                 if (ucnt > 1) {
-                    off += 8 * modelGL.vcnt;//secondary uv
+                    off += 8 * _vcnt;//secondary uv
                 }
             }
             else if (cdtype == 'G') {
                 var gcnt = dv.getInt8(off, true); off += 1;
-                //console.log("!>>gc " + gcnt.toString());
+                //console_log("!>>gc " + gcnt.toString());
                 while (gcnt > 0) {
                     const gnm = readString(new DataView(bstrm, off, 50));
                     model.allGrpNms.push(gnm);
                     gcnt -= 1;
                     off += gnm.length + 1;
-                    //console.log("!>>grp " + gnm);
+                    //console_log("!>>grp " + gnm);
                 }
-                for (var vc = 0; vc < modelGL.vcnt; vc++) {
+                for (var vc = 0; vc < _vcnt; vc++) {
                     var gws = [];
                     gcnt = dv.getInt8(off, true); off += 1;
                     while (gcnt > 0) {
@@ -90,11 +93,11 @@ function loadCMesh(gl, path, onload = null) {
                     const snm = readString(new DataView(bstrm, off, 50));
                     model.shapeNms.push(snm);
                     off += snm.length + 1;
-                    //console.log("!>>shp " + snm);
+                    //console_log("!>>shp " + snm);
                     
                     model.shapes.push([]);
                     var ss = model.shapes[si];
-                    for (var vc = 0; vc < modelGL.vcnt; vc++) {
+                    for (var vc = 0; vc < _vcnt; vc++) {
                         ss.push(
                             dv.getFloat32(off, true),
                             dv.getFloat32(off + 4, true),
@@ -111,12 +114,9 @@ function loadCMesh(gl, path, onload = null) {
             dtype = dv.getInt8(off, true); off += 1;
         }
         
-        updateModelBuffers(gl, modelGL, model);
+        modelGL = genModelBuffers(gl, model);
         modelGL.loaded = true;
-        if (onload) {
-            onload(modelGL);
-        }
+        console_log("loaded " + path + " (" + _vcnt + "v, " + _tcnt + "t)");
+        onload(modelGL);
     });
-    
-    return modelGL;
 }
