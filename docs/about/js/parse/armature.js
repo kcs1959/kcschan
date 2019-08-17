@@ -1,4 +1,4 @@
-function loadArmatureBone(gl, bstrm, dv, off, arm, po) {
+function loadArmatureBone(gl, bstrm, dv, off, arm, po, im0) {
     var wd = "";
     var decoder = new TextDecoder();
     const swd = decoder.decode(new DataView(bstrm, off, 30));
@@ -48,6 +48,7 @@ function loadArmatureBone(gl, bstrm, dv, off, arm, po) {
         po.addChild(bn.object);
     }
     bn.object.updateMatrices();
+    mat4.mul(bn.irestMat, im0, bn.object.worldMatrix);
 
     dtype = dv.getInt8(off, true);
     cdtype = String.fromCharCode(dtype);
@@ -79,13 +80,17 @@ function loadArmature(gl, path, obj, onload = null) {
 
         const mxlen = dv.byteLength;
 
+        var im = mat4.create();
+        mat4.invert(im, obj.worldMatrix);
+
         while (cdtype == "B") {
-            off = loadArmatureBone(gl, bstrm, dv, off, arm, obj);
+            off = loadArmatureBone(gl, bstrm, dv, off, arm, obj, im);
             if (off >= mxlen) break;
             dtype = dv.getInt8(off, true);
             cdtype = String.fromCharCode(dtype);
             off += 1;
         }
+        preupdate_comps.push(arm);
         if (onload)
             onload();
     });

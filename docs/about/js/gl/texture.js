@@ -3,8 +3,8 @@ function createTextureSt(gl, tex, w, h, fmt, type) {
         tex : tex,
         w : 0,
         h : 0,
-        fmt : gl.RGBA,
-        type : gl.UNSIGNED_BYTE,
+        fmt : fmt,
+        type : type,
         bind : function(loc, slot) {
             gl.uniform1i(loc, slot);
             gl.activeTexture(gl.TEXTURE0 + slot);
@@ -43,17 +43,18 @@ function createTexture(gl, path, callback=null, fmt=gl.RGBA, type=gl.UNSIGNED_BY
     return createTextureSt(gl, tex, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE);
 }
 
-function createBufTexture(gl, data, fmt=gl.RGBA, type=gl.FLOAT) {
+function createBufTexture(gl, data) {
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
-    const h = (data.length + 1023) / 1024;
-    const w = data.length - (h - 1) * 1024;
-    gl.texImage2D(gl.TEXTURE_2D, 0, fmt, w, h, 0, fmt, type, data);
+    const dl = data.length / 4;
+    const h = Math.floor((dl + 1023) / 1024);
+    const w = dl - (h - 1) * 1024;
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, w, h, 0, gl.RGBA, gl.FLOAT, data);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    return createTextureSt(gl, tex, w, h, fmt, type);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    return createTextureSt(gl, tex, w, h, gl.RGBA, gl.FLOAT);
 }
 
 function createDataTexture(gl, data, w, h, fmt, type) {
@@ -76,6 +77,6 @@ function createEmptyTexture(gl, w, h, fmt) {
 }
 
 function updateTexture(gl, tex, data) {
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, tex.w, tex.h, tex.fmt, tex.type, data);
+    gl.bindTexture(gl.TEXTURE_2D, tex.tex);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, tex.w, tex.h, tex.fmt, tex.type, data, 0);
 }

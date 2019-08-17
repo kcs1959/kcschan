@@ -34,11 +34,25 @@ function createTFProgram(gl, vs, fs, onms, vrs) {
             if (this.loaded) {
                 gl.useProgram(this.pointer);
                 var a = 0;
-                vrs.forEach(function (v) {
-                    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, a, 0);
+                outs.forEach(function (o) {
+                    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, a, o);
                     a += 1;
                 });
             }
+        },
+        execA : function(n) {
+            gl.enable(gl.RASTERIZER_DISCARD);
+            gl.beginTransformFeedback(gl.POINTS);
+            gl.drawArrays(gl.POINTS, 0, n);
+            gl.endTransformFeedback();
+            gl.disable(gl.RASTERIZER_DISCARD);
+        },
+        execE : function(n, tp = gl.UNSIGNED_SHORT) {
+            gl.enable(gl.RASTERIZER_DISCARD);
+            gl.beginTransformFeedback(gl.POINTS);
+            gl.drawElements(gl.POINTS, n, tp, 0);
+            gl.endTransformFeedback();
+            gl.disable(gl.RASTERIZER_DISCARD);
         }
     };
     

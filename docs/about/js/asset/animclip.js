@@ -16,7 +16,9 @@ function createAnimClip(nm = "unnamed") {
         frameEnd : 10,
 
         setTime : function(t) {
-
+            keys.forEach(k => {
+                
+            });
         }
     };
 }

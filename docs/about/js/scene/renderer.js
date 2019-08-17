@@ -20,6 +20,7 @@ function renderScene(gl, P, prog) {
     seek(activeScene.objects);
 
     var MVP = mat4.create();
+    prog.bind();
     mrs.forEach(function(mr) {
         const MV = mr.obj.worldMatrix;
         mat4.mul(MVP, P, MV);
@@ -28,6 +29,8 @@ function renderScene(gl, P, prog) {
         mr.mesh.bindAndDrawGL();
     });
     smrs.forEach(function(smr) {
+        smr.skin(gl);
+        prog.bind();
         const MV = smr.obj.worldMatrix;
         mat4.mul(MVP, P, MV);
         gl.uniformMatrix4fv(prog.uniforms[0], false, MVP);

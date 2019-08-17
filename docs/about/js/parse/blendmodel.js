@@ -35,6 +35,7 @@ function loadSkinnedMeshMeta(gl, path, fd, obj, arm, callback) {
         obj.addComponent(mr);
         mr.mesh = mesh;
         mr.arma = obj.parentObj.findByNm(arm).components[0];
+        mr.createDatTex(gl);
         const nm = registerMeshNm(gl, obj);
         mr.tex = createTexture(gl, fd + nm + ".jpg", callback);
     });

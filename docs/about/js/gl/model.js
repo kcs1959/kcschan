@@ -64,7 +64,6 @@ function genModelBuffers(gl, model) {
     bufs.data = model;
     
     if (model.skinned) {
-        
         const vao2 = gl.createVertexArray();
         const vb2 = createBuffer(gl, new Float32Array(model.verts));
         const nb2 = createBuffer(gl, new Float32Array(model.norms));
@@ -87,6 +86,14 @@ function genModelBuffers(gl, model) {
 }
 
 function updateModelBuffers(gl, modelGL, model) {
+    if (model.skinned) {
+        setBufferData(gl, modelGL.vbos_tf[0], new Float32Array(model.verts));
+        setBufferData(gl, modelGL.vbos_tf[1], new Float32Array(model.norms));
+        setBufferData(gl, modelGL.vbos_tf[2], new Float32Array(model.uvs));
+        attachBuffer(gl, modelGL.vao_tf, modelGL.vbos[0], 0, 3);
+        attachBuffer(gl, modelGL.vao_tf, modelGL.vbos[1], 1, 3);
+        attachBuffer(gl, modelGL.vao_tf, modelGL.vbos[2], 2, 2);
+    }
     setBufferData(gl, modelGL.vbos[0], new Float32Array(model.verts));
     setBufferData(gl, modelGL.vbos[1], new Float32Array(model.norms));
     setBufferData(gl, modelGL.vbos[2], new Float32Array(model.uvs));

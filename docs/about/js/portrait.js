@@ -12,6 +12,8 @@ var portrait_clothes_objs = [];
 
 portrait_main();
 
+var preupdate_comps = [];
+
 function portrait_main() {
     const canvas = document.querySelector("#portrait_canvas");
     const gl = canvas.getContext("webgl2");
@@ -53,7 +55,7 @@ function portrait_main() {
     });
 
     const prog = createProgram(gl, 'glsl/unlit.vs', 'glsl/unlit.fs', ["MVP", "tex"]);
-    const skinProg = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "dats", "mats", "shps", "shpWs"]);    
+    skinning_shad = createTFProgram(gl, 'glsl/skin_tf.vs', 'glsl/skin_tf.fs', ["outPos", "outNrm", "outUv"], ["vertCount", "dats", "mats", "shps", "shpWs"]);    
    
     var then = 0;
     var rot = 0;
@@ -92,7 +94,9 @@ function portrait_main() {
         mat4.fromTranslation(P2, vec3.fromValues(0, y, 0));
         mat4.mul(P, P2, P);
 
-        prog.bind();
+        preupdate_comps.forEach(c => {
+            c.preupdate(now, gl);
+        });
         renderScene(gl, P, prog);
         
         requestAnimationFrame(render);
