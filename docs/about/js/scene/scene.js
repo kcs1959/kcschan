@@ -2,6 +2,13 @@ function createScene() {
     return {
         objects : [],
         
+        findByNm : function(nm) {
+            for (let o of this.objects) {
+                const res = o.findByNm(nm);
+                if (res != null) return res;
+            }
+            return null;
+        },
         tree : function() {
             var dotree = function(s, oo, fl) {
                 const brown = '<span style="color: #804000">';

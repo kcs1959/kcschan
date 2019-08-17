@@ -25,9 +25,11 @@ function createModelBuffersSt(gl) {
         vao : null,
         vbos : [],
         vbosTex : [],
+        shpTex : null,
         elo : null,
         vcnt : 0,
         tcnt : 0,
+        scnt : 0,
         data : null,
         bindGL : function() {
             if (!this.loaded) return;
@@ -79,27 +81,15 @@ function genModelBuffers(gl, model) {
 
         bufs.vbosTex = [ vb2, nb2, ub2 ];
     }
+
+    bufs.scnt = model.shapes.length;
+    if (bufs.scnt > 0) {
+        const s = new Float32Array(bufs.scnt * v.length);
+        for (let a = 0; a < bufs.scnt; a++) {
+            s.set(model.shapes[a], a * v.length);
+        }
+        bufs.shpTex = createBufTexture(gl, s, 3, gl.RGB32F, gl.RGB);
+    }
     
     return bufs;
-}
-
-function updateModelBuffers(gl, modelGL, model) {
-    const v = new Float32Array(model.verts);
-    const n = new Float32Array(model.norms);
-    const u = new Float32Array(model.uvs);
-    if (model.skinned) {
-        updateTexture(gl, modelGL.vbosTex[0], v);
-        updateTexture(gl, modelGL.vbosTex[1], n);
-        updateTexture(gl, modelGL.vbosTex[2], u);
-    }
-    setBufferData(gl, modelGL.vbos[0], v);
-    setBufferData(gl, modelGL.vbos[1], n);
-    setBufferData(gl, modelGL.vbos[2], u);
-    attachBuffer(gl, modelGL.vao, modelGL.vbos[0], 0, 3);
-    attachBuffer(gl, modelGL.vao, modelGL.vbos[1], 1, 3);
-    attachBuffer(gl, modelGL.vao, modelGL.vbos[2], 2, 2);
-    modelGL.vbos[2].unbindGL();
-    setBufferData(gl, modelGL.elo, new Uint16Array(model.tris), gl.ELEMENT_ARRAY_BUFFER);
-    modelGL.vcnt = model.verts.length / 3;
-    modelGL.tcnt = model.tris.length / 3;
 }

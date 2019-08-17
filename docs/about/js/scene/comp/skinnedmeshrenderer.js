@@ -9,6 +9,8 @@ function createSkinnedMeshRenderer() {
         arma : null,
         tex : null,
         datTex : null,
+        shpWts : null,
+        shpWtTex : null,
 
         createDatTex : function(gl) {
             var noweights = 0;
@@ -36,8 +38,23 @@ function createSkinnedMeshRenderer() {
             if (noweights > 0) {
                 console_warn(noweights + " vertices with no weights assigned!");
             }
-            console_log("gen for " + this.obj.name);
             this.datTex = createBufTexture(gl, dat);
+            
+            this.shpWts = new Float32Array(this.mesh.scnt);
+            this.shpWtTex = createBufTexture(gl, this.shpWts, 1, gl.R32F, gl.RED);
+        },
+        setShape : function(nm, vl) {
+            const i = this.mesh.data.shapeNms.indexOf(nm);
+            if (i == -1) {
+                console_warn("shape '" + nm + "' does not exist!");
+                return;
+            }
+            this.shpWts[i] = vl;
+        },
+        updateShps : function(gl) {
+            if (this.mesh.scnt > 0) {
+                updateTexture(gl, this.shpWtTex, this.shpWts);
+            }
         },
         skin : function(gl) {
             if (!skinning_shad) return;
@@ -47,12 +64,16 @@ function createSkinnedMeshRenderer() {
                 this.mesh.vbos[2].pointer
             ]);
             gl.uniform1i(skinning_shad.uniforms[0], this.mesh.vcnt);
-            gl.uniform1i(skinning_shad.uniforms[1], 0);
+            gl.uniform1i(skinning_shad.uniforms[1], this.mesh.scnt);
             this.mesh.vbosTex[0].bind(skinning_shad.uniforms[2], 0);
             this.mesh.vbosTex[1].bind(skinning_shad.uniforms[3], 1);
             this.mesh.vbosTex[2].bind(skinning_shad.uniforms[4], 2);
             this.datTex.bind(skinning_shad.uniforms[5], 3);
             this.arma.matTex.bind(skinning_shad.uniforms[6], 4);
+            if (this.mesh.scnt > 0) {
+                this.mesh.shpTex.bind(skinning_shad.uniforms[7], 5);
+                this.shpWtTex.bind(skinning_shad.uniforms[8], 6);
+            }
             gl.bindVertexArray(empty_vao);
             skinning_shad.exec(this.mesh.vcnt);
             skinning_shad.unbind(3);

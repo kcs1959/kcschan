@@ -29,6 +29,7 @@ function renderScene(gl, P, prog) {
         mr.mesh.bindAndDrawGL();
     });
     smrs.forEach(function(smr) {
+        smr.updateShps(gl);
         smr.skin(gl);
         prog.bind();
         const MV = smr.obj.worldMatrix;

@@ -56,14 +56,25 @@ function portrait_main() {
 
     var hb = null;
     var bb = null;
+    var bdy = null;
 
-    loadBlend(gl, 'data/kcschan', function() {
+    loadBlend(gl, 'data/kcschan', function(baseObj) {
+        activeScene.objects.push(baseObj);
+        var clths = "";
+        portrait_clothes_list.forEach(function(s, i) {
+            clths += "<input type='radio' name='clth' onclick='portrait_clothes_id=" + i.toString() + ((!i) ? "' checked>" : "'>") + s + "<br/>";
+        });
+        document.querySelector("#clothes_list").innerHTML = clths;
+        document.querySelector("#debug_scenetree").innerHTML = activeScene.tree();
+
         const arm = activeScene.objects[0].findByNm("Armature");
         const arma = arm.components[0];
         arma.anim = anim;
         arma.initMats();
         hb = arm.findByNm("head");
         bb = arm.findByNm("body1");
+        bdy = activeScene.findByNm("body").components[0];
+        bdy.setShape("mouthAngry", 1);
     });
 
     const prog = createProgram(gl, 'glsl/unlit.vs', 'glsl/unlit.fs', ["MVP", "tex"]);
@@ -73,16 +84,19 @@ function portrait_main() {
     var rot = 0;
     const rotSp = 2;
 
+    var e = 1.0;
+
     var _portrait_clothes_id = portrait_clothes_id;
 
     function render(now) {
+
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         now *= 0.001;  // convert to seconds
         const deltaTime = now - then;
         then = now;
 
         const scl = 0.25;
-        const y = -1;
+        const y = -0.9;
 
         if (portrait_turn_left)
             rot += rotSp * deltaTime;
@@ -103,6 +117,23 @@ function portrait_main() {
             quat.fromEuler(bb.rotation, Math.sin(now*1.5) * 1 + 10, 0, 0);
             hb.updateMatrices();
             bb.updateMatrices();
+            
+            if (e < 0.2) {
+                bdy.setShape("eyeCloseL", e * 5);
+                bdy.setShape("eyeCloseR", e * 5);
+            }
+            else if (e < 0.4) {
+                bdy.setShape("eyeCloseL", (0.4 - e) * 5);
+                bdy.setShape("eyeCloseR", (0.4 - e) * 5);
+            }
+            else {
+                bdy.setShape("eyeCloseL", 0);
+                bdy.setShape("eyeCloseR", 0);
+            }
+            e -= deltaTime;
+            if (e < 0) {
+                e = 1 + Math.random() * 2;
+            }
         }
 
         var P = mat4.create();

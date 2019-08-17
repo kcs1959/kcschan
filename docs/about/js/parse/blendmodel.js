@@ -133,7 +133,7 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback) {
     }
 }
 
-function loadBlend(gl, name, onload = null) {
+function loadBlend(gl, name, onload) {
     const path = name + ".blend.bin";
     const fd = name + "_blend/";
     loadString(path, function(str) {
@@ -147,16 +147,7 @@ function loadBlend(gl, name, onload = null) {
         var allObjs = [];
         
         _loadBlendEntry(gl, baseObj, allObjs, strs, 1, fd, function() {
-            activeScene.objects.push(baseObj);
-            var clths = "";
-            portrait_clothes_list.forEach(function(s, i) {
-                clths += "<input type='radio' name='clth' onclick='portrait_clothes_id=" + i.toString() + ((!i) ? "' checked>" : "'>") + s + "<br/>";
-            });
-            document.querySelector("#clothes_list").innerHTML = clths;
-            document.querySelector("#debug_scenetree").innerHTML = activeScene.tree();
-
-            if (onload)
-                onload();
+            onload(baseObj);
         });
     });
 }

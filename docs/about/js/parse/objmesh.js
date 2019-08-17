@@ -1,6 +1,5 @@
-function loadObj(gl, path) {
+function loadObj(gl, path, callback) {
     var model = createModelSt();
-    var modelGL = genModelBuffers(gl, model);
 
     loadString(path, function(str) {
         _verts = [];
@@ -80,10 +79,9 @@ function loadObj(gl, path) {
             }
         });
 
-        updateModelBuffers(gl, modelGL, model);
+        var modelGL = genModelBuffers(gl, model);
         modelGL.loaded = true;
         console_log('loaded obj file ' + path + ' (' + _verts.length.toString() + ' vertices, ' + triCnt.toString() + ' triangles)');
+        return modelGL;
     });
-
-    return modelGL;
 }

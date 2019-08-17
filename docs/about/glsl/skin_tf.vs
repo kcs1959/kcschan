@@ -46,10 +46,9 @@ void main() {
         + buf2mat(mats, int(dt_mats[3]))*dt_ws[3];
     vec4 p = vec4(in_pos, 1);
     vec4 n = vec4(in_nrm, 0);
-    //for (int s = 0; s < shpCount; s++) {
-    //    p += _texelFetch(shps, s*vertCount + gid) * _texelFetch(shpWs, s).r;
-    //}
-    p.w = 1.0;
+    for (int s = 0; s < shpCount; s++) {
+        p.rgb += _texelFetch(shps, s*vertCount + gid).rgb * _texelFetch(shpWs, s).r;
+    }
     p = m * p;
     outPos = p.xyz / p.w;
     outNrm = (m * n).xyz;
