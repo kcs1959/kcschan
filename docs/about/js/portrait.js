@@ -3,6 +3,8 @@ var vec3 = glMatrix.vec3;
 var vec4 = glMatrix.vec4;
 var quat = glMatrix.quat;
 
+var portrait_load_progress = createProgressSt();
+
 var portrait_turn_left = false;
 var portrait_turn_right = false;
 
@@ -58,7 +60,7 @@ function portrait_main() {
     var bb = null;
     var bdy = null;
 
-    loadBlend(gl, 'data/kcschan', function(baseObj) {
+    loadBlend(gl, 'data/kcschan', portrait_load_progress, function(baseObj) {
         activeScene.objects.push(baseObj);
         var clths = "";
         portrait_clothes_list.forEach(function(s, i) {

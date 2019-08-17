@@ -41,7 +41,8 @@ function loadSkinnedMeshMeta(gl, path, fd, obj, arm, callback) {
     });
 }
 
-function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback) {
+function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, progress, callback) {
+    progress.val = (i-1.0) / strs.length;
     if (i == strs.length) {
         if (callback)
             callback();
@@ -118,22 +119,22 @@ function _loadBlendEntry(gl, baseObj, allObjs, strs, i, fd, callback) {
     obj.updateMatrices();
     if (isarm) {
         loadArmature(gl, fd + obj.name + ".arma.meta", obj, () =>
-            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
+            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, progress, callback)
         );
     }
     else if (partp == 2) {
         loadSkinnedMeshMeta(gl, fd + obj.name + ".mesh.meta", fd, obj, pnm, () =>
-            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
+            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, progress, callback)
         );
     }
     else {
         loadMeshMeta(gl, fd + obj.name + ".mesh.meta", fd, obj, () =>
-            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, callback)
+            _loadBlendEntry(gl, baseObj, allObjs, strs, i+1, fd, progress, callback)
         );
     }
 }
 
-function loadBlend(gl, name, onload) {
+function loadBlend(gl, name, progress, onload) {
     const path = name + ".blend.bin";
     const fd = name + "_blend/";
     loadString(path, function(str) {
@@ -146,7 +147,7 @@ function loadBlend(gl, name, onload) {
         var baseObj = createSceneObject(name);
         var allObjs = [];
         
-        _loadBlendEntry(gl, baseObj, allObjs, strs, 1, fd, function() {
+        _loadBlendEntry(gl, baseObj, allObjs, strs, 1, fd, progress, function() {
             onload(baseObj);
         });
     });
