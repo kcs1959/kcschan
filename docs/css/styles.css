@@ -24,7 +24,9 @@ body {
 }
 
 .navbar-brand {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 10;
   width: 240px;
 }
@@ -53,4 +55,19 @@ ul.navbar-right-links li:hover {
 }
 ul.navbar-right-links li.active {
   color: white;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 4.2rem auto 0 auto;
+}
+
+.prof {
+  margin-top: 300px;
+}
+
+table.prof-table th {
+  text-align: left;
+  vertical-align: top;
+  max-width: 500px;
 }
