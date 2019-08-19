@@ -1,10 +1,56 @@
 body {
-    font-family: -apple-system,
-                blinkMacSystemFont,
-                'Helvetica Neue',
-                'Segoe UI',
-                'Yu Gothic',
-                YuGothic,
-                Meiryo,
-                sans-serif;
+  margin: 0;
+  font-family: -apple-system,
+              blinkMacSystemFont,
+              'Helvetica Neue',
+              'Segoe UI',
+              'Yu Gothic',
+              YuGothic,
+              Meiryo,
+              sans-serif;
+}
+
+.navbar-brand:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+  width: 0;
+  height: 0;
+  z-index: -10;
+  border-right: 30px solid transparent;
+  border-bottom: 150px solid transparent;
+  border-left: 500px solid #4c88f8;
+}
+
+.navbar-brand {
+  position: relative;
+  z-index: 10;
+  width: 240px;
+}
+
+.navbar-body {
+  position: absolute;
+  background-color: rgb(121, 197, 255);
+  top: 0%;
+  width: 100%;
+  height: 4.2rem;
+}
+
+ul.navbar-right-links {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+}
+ul.navbar-right-links li {
+  margin-right: 3rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.5rem;
+}
+ul.navbar-right-links li:hover {
+  color: white;
+  border-bottom: solid 2px white;
+}
+ul.navbar-right-links li.active {
+  color: white;
 }
