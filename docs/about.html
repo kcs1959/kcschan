@@ -1,54 +1,101 @@
-<html>
-<meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>KCSちゃんかわいい</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
 
 <body>
-    <div style="width:700" id="asdf">
-        KCSちゃんかわいい
+  <nav class="navbar" role="navigation">
+    <div class="navbar-brand">
+      <a><img src="img/logo.png" width="100%"></a>
     </div>
 
-    <canvas id="portrait_canvas" width="800" height="800" style="position: fixed;z-index:-1;"></canvas>
-    
-    <button onmousedown="portrait_turn_left = true" onmouseup="portrait_turn_left = false">turn left </button>
-    <button onmousedown="portrait_turn_right = true" onmouseup="portrait_turn_right = false">turn right</button>
-
-    <div id="clothes_list">
+    <div class="navbar-body">
+      <ul class="navbar-right-links">
+        <li class="active">
+          <a>ABOUT</a>
+        </li>
+        <li>
+          <a>CHARACTERS</a>
+        </li>
+        <li>
+          <a>WORKS</a>
+        </li>
+      </ul>
     </div>
+  </nav>
 
-    <!-- debug information -->
-    <div class="debug" style="padding-left:800px;height:800px;overflow-y:scroll;scrollbar-width:none;position:absolute;top:10px;z-index:-2">
-        <div id="debug_scenetree" style="white-space: pre-line; font-family:'Lucida Console', Monaco, monospace;font-size: x-small;">Scene Tree</div>
+  <div class="container">
+    <div class="prof">
+      <h1>KCSちゃん</h1>
+      <table class="prof-table">
+        <tr>
+          <th>本名</th><th>:</th><th>○○○</th>
+        </tr>
+        <tr>
+          <th>誕生日</th><th>:</th><th>9月22日</th>
+        </tr>
+        <tr>
+          <th>趣味</th><th>:</th><th>Rust</th>
+        </tr>
+        <tr>
+          <th>好きなもの</th><th>:</th><th>部員、KCSドラゴン</th>
+        </tr>
+        <tr>
+          <th>得意なこと</th><th>:</th><th>プログラミング言語</th>
+        </tr>
+        <tr>
+          <th>苦手なこと</th><th>:</th><th>バグ、ホラー</th>
+        </tr>
+        <tr>
+          <th>説明文</th><th>:</th><th>Lorem ipsum phasellus quisque suscipit inceptos ante, scelerisque euismod ligula ut platea taciti, varius conubia fringilla hac tempor quam hendrerit consectetur mollis suspendisse posuere, lacus mauris nec lorem euismod taciti, cubilia tristique diam tempor.</th>
+        </tr>
+      </table>
+
+      <button onmousedown="portrait_turn_left = true" onmouseup="portrait_turn_left = false">turn left </button>
+      <button onmousedown="portrait_turn_right = true" onmouseup="portrait_turn_right = false">turn right</button>
+      <div id="clothes_list"></div>
     </div>
+  </div>
+  
+  <canvas id="portrait_canvas" width="800" height="800" style="position: fixed;z-index:-1;"></canvas>
+
+  <!-- debug information -->
+  <div class="debug" style="padding-left:800px;height:800px;overflow-y:scroll;scrollbar-width:none;position:absolute;top:10px;z-index:-2">
+      <div id="debug_scenetree" style="white-space: pre-line; font-family:'Lucida Console', Monaco, monospace;font-size: x-small;">Scene Tree</div>
+  </div>
+
+  <!-- scripts for 3d portrait start -->
+  <script src="http://glmatrix.net/dist/gl-matrix-min.js"></script>
+
+  <script src="js/util/log.js"></script>
+  <script src="js/io/xhr.js"></script>
+  <script src="js/gl/vbo.js"></script>
+  <script src="js/gl/model.js"></script>
+  <script src="js/gl/shader.js"></script>
+  <script src="js/gl/texture.js"></script>
+  <script src="js/util/str.js"></script>
+  <script src="js/util/math.js"></script>
+  <script src="js/util/vec3.js"></script>
+  <script src="js/util/quat.js"></script>
+  <script src="js/util/mat4.js"></script>
+  <script src="js/util/progress.js"></script>
+  <script src="js/asset/animclip.js"></script>
+  <script src="js/scene/scene.js"></script>
+  <script src="js/scene/sceneobject.js"></script>
+  <script src="js/scene/comp/armature.js"></script>
+  <script src="js/scene/comp/meshrenderer.js"></script>
+  <script src="js/scene/comp/skinnedmeshrenderer.js"></script>
+  <script src="js/scene/renderer.js"></script>
+  <script src="js/parse/animclip.js"></script>
+  <script src="js/parse/objmesh.js"></script>
+  <script src="js/parse/chokomesh.js"></script>
+  <script src="js/parse/armature.js"></script>
+  <script src="js/parse/blendmodel.js"></script>
+
+  <script src="js/portrait.js"></script>
+  <!-- scripts for 3d portrait end -->
 </body>
-
-<!-- scripts for 3d portrait start -->
-<script src="http://glmatrix.net/dist/gl-matrix-min.js"></script>
-
-<script src="js/util/log.js"></script>
-<script src="js/io/xhr.js"></script>
-<script src="js/gl/vbo.js"></script>
-<script src="js/gl/model.js"></script>
-<script src="js/gl/shader.js"></script>
-<script src="js/gl/texture.js"></script>
-<script src="js/util/str.js"></script>
-<script src="js/util/math.js"></script>
-<script src="js/util/vec3.js"></script>
-<script src="js/util/quat.js"></script>
-<script src="js/util/mat4.js"></script>
-<script src="js/util/progress.js"></script>
-<script src="js/asset/animclip.js"></script>
-<script src="js/scene/scene.js"></script>
-<script src="js/scene/sceneobject.js"></script>
-<script src="js/scene/comp/armature.js"></script>
-<script src="js/scene/comp/meshrenderer.js"></script>
-<script src="js/scene/comp/skinnedmeshrenderer.js"></script>
-<script src="js/scene/renderer.js"></script>
-<script src="js/parse/animclip.js"></script>
-<script src="js/parse/objmesh.js"></script>
-<script src="js/parse/chokomesh.js"></script>
-<script src="js/parse/armature.js"></script>
-<script src="js/parse/blendmodel.js"></script>
-
-<script src="js/portrait.js"></script>
-<!-- scripts for 3d portrait end -->
-
 </html>
