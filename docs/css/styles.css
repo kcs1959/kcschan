@@ -1,50 +1,84 @@
-html {
-    height: 100%;
-    margin: 0px;
-    padding: 0px;
-}
-
 body {
-    position: static;
-    margin: 0;
-    font-family: "Sawarabi Gothic";
-    overflow: hidden;
-    height: 100%;
-    background-color: #000;
+  margin: 0;
+  font-family: -apple-system,
+              blinkMacSystemFont,
+              'Helvetica Neue',
+              'Segoe UI',
+              'Yu Gothic',
+              YuGothic,
+              Meiryo,
+              sans-serif;
 }
 
-#top {
-    height: 100%;
-    overflow: hidden;
+.navbar-brand:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+  width: 0;
+  height: 0;
+  z-index: -10;
+  border-right: 30px solid transparent;
+  border-bottom: 150px solid transparent;
+  border-left: 500px solid #4c88f8;
 }
 
-#top_clip {
-    z-index: -3;
-    position: absolute;
-    clip: rect(0, auto, auto, 0);
-    height: 56vw;
-    width: 100%;
-    height: 100%;
+.navbar-brand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 240px;
 }
 
-#top_bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.navbar-body {
+  position: absolute;
+  background-color: rgb(121, 197, 255);
+  top: 0%;
+  width: 100%;
+  height: 4.2rem;
 }
 
-#top_logo {
-    width: 50vh;
-    margin: auto;
-    display: block;
-    vertical-align: middle;
-    margin-top: 40vh;
+ul.navbar-right-links {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+}
+ul.navbar-right-links li {
+  margin-right: 3rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.5rem;
+}
+ul.navbar-right-links li:hover {
+  color: white;
+  border-bottom: solid 2px white;
+}
+ul.navbar-right-links li.active {
+  color: white;
 }
 
-#cover {
-    width: 100%;
-    overflow: hidden;
+.container {
+  max-width: 1024px;
+  margin: 4.2rem auto 0 auto;
+}
+
+.prof {
+  margin-top: 300px;
+}
+
+table.prof-table th {
+  text-align: left;
+  vertical-align: top;
+  max-width: 500px;
+}
+
+.debug {
+  display: none;
+}
+
+#portrait_canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: -1;
 }
