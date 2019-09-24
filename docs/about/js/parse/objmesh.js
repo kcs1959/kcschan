@@ -1,6 +1,5 @@
-function loadObj(gl, path) {
-    var model = createModel();
-    var modelGL = genModelBuffers(gl, model);
+function loadObj(gl, path, callback) {
+    var model = createModelSt();
 
     loadString(path, function(str) {
         _verts = [];
@@ -31,7 +30,7 @@ function loadObj(gl, path) {
             else if (ss0 == 'vt') {
                 _uvs.push(
                     parseFloat(ss[1]),
-                    parseFloat(ss[2])
+                    1.0 - parseFloat(ss[2])
                 );
             }
             else if (ss0 == 'f') {
@@ -80,8 +79,9 @@ function loadObj(gl, path) {
             }
         });
 
-        updateModelBuffers(gl, modelGL, model);
+        var modelGL = genModelBuffers(gl, model);
+        modelGL.loaded = true;
+        console_log('loaded obj file ' + path + ' (' + _verts.length.toString() + ' vertices, ' + triCnt.toString() + ' triangles)');
+        return modelGL;
     });
-
-    return modelGL;
 }

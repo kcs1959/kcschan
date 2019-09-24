@@ -8,6 +8,9 @@ function createBuffer(gl, data, tp = gl.ARRAY_BUFFER) {
         type : tp,
         bindGL : function() {
             gl.bindBuffer(this.type, this.pointer);
+        },
+        unbindGL : function() {
+            gl.bindBuffer(this.type, null);
         }
     };
 }
