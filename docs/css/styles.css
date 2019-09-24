@@ -72,8 +72,13 @@ table.prof-table th {
   max-width: 500px;
 }
 
+.debug {
+  display: none;
+}
+
 #portrait_canvas {
   position: absolute;
   top: 0;
+  right: 0;
   z-index: -1;
 }
