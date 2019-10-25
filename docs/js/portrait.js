@@ -91,6 +91,9 @@ function portrait_main() {
     var _portrait_clothes_id = portrait_clothes_id;
 
     function render(now) {
+        canvas.width = canvas.clientHeight.toString();
+        canvas.height = canvas.clientHeight.toString();
+        gl.viewport(0, 0, canvas.width, canvas.height);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         now *= 0.001;  // convert to seconds
@@ -140,7 +143,7 @@ function portrait_main() {
 
         var P = mat4.create();
         var P2 = mat4.create();
-        mat4.fromScaling(P, vec3.fromValues(canvas.clientHeight * scl / canvas.clientWidth, scl, scl));
+        mat4.fromScaling(P, vec3.fromValues(canvas.height * scl / canvas.width, scl, scl));
         mat4.fromYRotation(P2, rot);
         mat4.mul(P, P2, P);
         mat4.fromTranslation(P2, vec3.fromValues(0, y, 0));

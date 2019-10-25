@@ -10,6 +10,18 @@ body {
               sans-serif;
 }
 
+.bg_cover {
+  z-index: -3;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  background-image: url("../img/bg_kcschan.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
 .navbar-brand:before {
   position: absolute;
   top: 0;
@@ -62,6 +74,7 @@ ul.navbar-right-links li.active a {
 
 .prof {
   margin-top: 300px;
+  margin-left: 100px;
 }
 
 table.prof-table th {
