@@ -32,6 +32,9 @@ body {
 }
 
 .navbar-body {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   position: absolute;
   background-color: rgb(121, 197, 255);
   top: 0%;
@@ -44,16 +47,16 @@ ul.navbar-right-links {
   display: flex;
   justify-content: flex-end;
 }
-ul.navbar-right-links li {
+ul.navbar-right-links li a{
   margin-right: 3rem;
   color: rgba(255, 255, 255, 0.8);
   font-size: 1.5rem;
 }
-ul.navbar-right-links li:hover {
+ul.navbar-right-links li:hover a{
   color: white;
   border-bottom: solid 2px white;
 }
-ul.navbar-right-links li.active {
+ul.navbar-right-links li.active a {
   color: white;
 }
 
