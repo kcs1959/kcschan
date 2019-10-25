@@ -100,3 +100,19 @@ table.prof-table th {
 #hero-main {
   background-image: url(../img/main_bg.png);
 }
+
+.mt-1 {
+  margin-top: 10px !important;
+}
+
+.mt-2 {
+  margin-top: 20px !important;
+}
+
+.mt-3 {
+  margin-top: 30px !important;
+}
+
+.mt-4 {
+  margin-top: 40px !important;
+}
